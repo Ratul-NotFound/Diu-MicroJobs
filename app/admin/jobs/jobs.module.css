@@ -1,0 +1,353 @@
+/* ==========================================================================
+   DIU MicroJobs — Admin Jobs CSS Module
+   ========================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+}
+
+.titleInfo h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.titleInfo p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Tabs Bar ──────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 2px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  padding: var(--space-2) var(--space-1);
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tab.active {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.tab.active::after {
+  opacity: 1;
+}
+
+/* ─── Content ───────────────────────────────────────────────────────────── */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.jobCard {
+  padding: var(--space-6);
+}
+
+.jobGrid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+/* Job info details */
+.jobInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.jobTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.jobTitleRow h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+
+.categoryLine {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dot {
+  color: var(--color-text-light);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  white-space: pre-wrap;
+}
+
+.jobMeta {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.rejectionBox {
+  display: flex;
+  align-items: start;
+  gap: var(--space-3);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-error) 15%, transparent);
+  font-size: var(--text-xs);
+  margin-top: var(--space-2);
+}
+
+.rejectionBox strong {
+  color: var(--color-error);
+}
+
+/* Client & Moderation Action Box */
+.moderationPanel {
+  border-left: 1px solid var(--color-border-light);
+  padding-left: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  height: 100%;
+  justify-content: space-between;
+}
+
+.clientBox {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.clientAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.clientAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.clientDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.clientName {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.clientRole {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.clientEmail {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  margin-top: 1px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rejectBtn {
+  color: var(--color-error) !important;
+  border-color: color-mix(in srgb, var(--color-error) 30%, white) !important;
+}
+
+.rejectBtn:hover {
+  background-color: var(--color-error-light) !important;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+.pageText {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Modal Specifics ───────────────────────────────────────────────────── */
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 500px;
+}
+
+.modalDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+.modalFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modalFormGroup label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.modalTextarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  background-color: var(--color-card);
+  color: var(--color-text);
+  outline: none;
+  resize: vertical;
+}
+
+.modalTextarea:focus {
+  border-color: var(--color-border-focus);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-4);
+}
+
+/* ─── Responsive Adjustments ────────────────────────────────────────────── */
+
+@media (max-width: 992px) {
+  .jobGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .moderationPanel {
+    border-left: none;
+    border-top: 1px solid var(--color-border-light);
+    padding-left: 0;
+    padding-top: var(--space-6);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .actions {
+    width: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .moderationPanel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .actions {
+    width: 100%;
+  }
+}

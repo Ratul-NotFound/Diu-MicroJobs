@@ -1,0 +1,73 @@
+/* ========================================
+   Badge Component Styles
+   ======================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---------- Sizes ---------- */
+
+.sm {
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+}
+
+.md {
+  padding: 4px 12px;
+  font-size: var(--text-sm);
+}
+
+/* ---------- Variants ---------- */
+
+.primary {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.secondary {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 12%, transparent);
+}
+
+.success {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 12%, transparent);
+}
+
+.warning {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 12%, transparent);
+}
+
+.error {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border: 1px solid color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+
+.muted {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+/* ---------- Dot ---------- */
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  background-color: currentColor;
+}

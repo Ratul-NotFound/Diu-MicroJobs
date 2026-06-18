@@ -1,0 +1,113 @@
+import { NextResponse } from 'next/server';
+import { verifyAuth } from '@/lib/firebase-admin';
+import { connectDB } from '@/lib/mongodb';
+import Proposal from '@/models/Proposal';
+import Job from '@/models/Job';
+import User from '@/models/User';
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const decoded = await verifyAuth(request);
+    await connectDB();
+    const { id: jobId } = await params;
+
+    const user = await User.findOne({ firebaseUid: decoded.uid });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+    }
+
+    const isClient = job.client.toString() === user._id.toString();
+
+    // If client, return all proposals; if freelancer, return only their own
+    const query = isClient 
+      ? { job: jobId } 
+      : { job: jobId, freelancer: user._id };
+
+    const proposals = await Proposal.find(query)
+      .populate('freelancer', 'displayName photoURL rating completedJobs department role bio skills')
+      .sort({ createdAt: -1 });
+
+    return NextResponse.json({ proposals });
+  } catch (error) {
+    console.error('Get proposals error:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const decoded = await verifyAuth(request);
+    await connectDB();
+    const { id: jobId } = await params;
+
+    const user = await User.findOne({ firebaseUid: decoded.uid });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    if (user.status !== 'active') {
+      return NextResponse.json({ error: 'Your account is not active' }, { status: 403 });
+    }
+
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+    }
+
+    if (job.status !== 'open') {
+      return NextResponse.json({ error: 'Job is not open for proposals' }, { status: 400 });
+    }
+
+    if (job.client.toString() === user._id.toString()) {
+      return NextResponse.json({ error: 'You cannot apply to your own job' }, { status: 400 });
+    }
+
+    // Check if already applied
+    const existing = await Proposal.findOne({ job: jobId, freelancer: user._id });
+    if (existing) {
+      return NextResponse.json({ error: 'You have already submitted a proposal for this job' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { coverLetter, bidAmount, estimatedDuration, attachments } = body;
+
+    if (!coverLetter || bidAmount === undefined) {
+      return NextResponse.json({ error: 'Cover letter and bid amount are required' }, { status: 400 });
+    }
+
+    const proposal = await Proposal.create({
+      job: jobId,
+      freelancer: user._id,
+      coverLetter,
+      bidAmount,
+      estimatedDuration: estimatedDuration || '',
+      attachments: attachments || [],
+      status: 'pending',
+    });
+
+    // Increment proposal count
+    await Job.findByIdAndUpdate(jobId, { $inc: { proposalCount: 1 } });
+
+    // Populate freelancer details
+    const populated = await Proposal.findById(proposal._id)
+      .populate('freelancer', 'displayName photoURL rating');
+
+    return NextResponse.json({ proposal: populated }, { status: 201 });
+  } catch (error) {
+    console.error('Submit proposal error:', error);
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

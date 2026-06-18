@@ -1,0 +1,18 @@
+{
+  "name": "DIU MicroJobs",
+  "short_name": "DIUMicroJobs",
+  "description": "DIU MicroJobs Freelance Platform for Daffodil International University",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fc",
+  "theme_color": "#034ea2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

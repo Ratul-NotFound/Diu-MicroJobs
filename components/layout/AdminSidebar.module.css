@@ -1,0 +1,183 @@
+/* ========================================
+   AdminSidebar — Admin-specific sidebar
+   ======================================== */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--nav-height);
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--nav-height));
+  background-color: var(--color-sidebar);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-sticky);
+  overflow-y: auto;
+}
+
+/* ---------- Admin indicator ---------- */
+
+.adminHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  border-bottom: 1px solid var(--color-border-light);
+  margin-bottom: var(--space-2);
+}
+
+.adminBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  line-height: 1;
+  user-select: none;
+}
+
+.adminTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+/* ---------- Navigation ---------- */
+
+.nav {
+  flex: 1;
+  padding: var(--space-2) 0;
+}
+
+.sectionLabel {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-4) var(--space-4) var(--space-1);
+  user-select: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  margin: 2px var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: color var(--transition-base), background-color var(--transition-base);
+  position: relative;
+}
+
+.item:hover {
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.itemActive {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  font-weight: var(--weight-medium);
+}
+
+.itemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background-color: var(--color-error);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.itemActive:hover {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.itemLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Badge */
+
+.itemBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background-color: var(--color-warning);
+  color: var(--color-text-inverse);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-full);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ---------- Version / Footer ---------- */
+
+.sidebarFooter {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.version {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Mobile overlay ---------- */
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: var(--nav-height);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: calc(var(--z-sticky) - 1);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    z-index: var(--z-overlay);
+    box-shadow: none;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .overlay {
+    display: block;
+  }
+}

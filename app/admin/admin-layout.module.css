@@ -1,0 +1,209 @@
+/* ==========================================================================
+   DIU MicroJobs — Admin Layout CSS Module
+   ========================================================================== */
+
+.layoutWrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.mainPanel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+  height: 100vh;
+}
+
+/* ─── Admin Header ──────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  background-color: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--space-6);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+}
+
+.menuToggle:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.adminTag {
+  background-color: var(--color-error);
+  color: var(--color-text-inverse);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.roleName {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.userName {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.logoutBtn {
+  color: var(--color-text-muted) !important;
+}
+
+.logoutBtn:hover {
+  color: var(--color-error) !important;
+  background-color: var(--color-error-light) !important;
+}
+
+/* ─── Admin Page Content ────────────────────────────────────────────────── */
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ─── Access Denied Screen ──────────────────────────────────────────────── */
+
+.accessDeniedContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding: var(--space-4);
+}
+
+.deniedCard {
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.deniedIcon {
+  color: var(--color-error);
+  margin-bottom: var(--space-4);
+}
+
+.deniedCard h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.deniedCard p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-6);
+}
+
+.deniedActions {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.deniedActions button {
+  flex: 1;
+}
+
+/* ─── Loading Screen ────────────────────────────────────────────────────── */
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  gap: var(--space-4);
+  color: var(--color-text-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-error);
+  border-radius: 999px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive Adjustments ────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .menuToggle {
+    display: block;
+  }
+
+  .header {
+    padding: 0 var(--space-4);
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .logoutText {
+    display: none;
+  }
+
+  .content {
+    padding: var(--space-4);
+  }
+
+  .deniedActions {
+    flex-direction: column;
+  }
+}

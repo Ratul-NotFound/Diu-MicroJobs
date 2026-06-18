@@ -1,0 +1,50 @@
+/* ========================================
+   Card Component Styles
+   ======================================== */
+
+.card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base), background-color var(--transition-base);
+}
+
+/* ---------- Variants ---------- */
+
+.default {
+  box-shadow: var(--shadow-sm);
+}
+
+.interactive {
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color var(--transition-base);
+}
+
+.interactive:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  transform: translateY(-5px) scale(1.01);
+}
+
+.bordered {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+
+/* ---------- Padding ---------- */
+
+.paddingSm {
+  padding: var(--space-4);
+}
+
+.paddingMd {
+  padding: var(--space-6);
+}
+
+.paddingLg {
+  padding: var(--space-8);
+}

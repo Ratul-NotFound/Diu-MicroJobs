@@ -1,0 +1,36 @@
+.container {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.starWrapper {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+
+.emptyStar {
+  color: var(--color-border);
+  fill: var(--color-border-light);
+  display: block;
+}
+
+.filledStarContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.filledStar {
+  color: var(--color-accent);
+  fill: var(--color-accent);
+  display: block;
+}

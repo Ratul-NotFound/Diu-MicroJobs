@@ -1,0 +1,335 @@
+/* ==========================================================================
+   DIU MicroJobs — Admin Users CSS Module
+   ========================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+}
+
+.titleInfo h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.titleInfo p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Filters Card ──────────────────────────────────────────────────────── */
+
+.filtersCard {
+  padding: var(--space-5);
+}
+
+.filtersLayout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  display: flex;
+  gap: var(--space-2);
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+.searchBox > div {
+  flex-grow: 1;
+}
+
+.selectsRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 160px;
+}
+
+.selectGroup label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Users Table Card ──────────────────────────────────────────────────── */
+
+.tableCard {
+  overflow: hidden;
+}
+
+.userDetails {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.email {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.idInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.studentIdVal {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.deptVal {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.roleTag {
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.completedCount {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.verifyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.actionsCell {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.suspendBtn {
+  color: var(--color-warning) !important;
+  border-color: color-mix(in srgb, var(--color-warning) 30%, white) !important;
+}
+
+.suspendBtn:hover {
+  background-color: var(--color-warning-light) !important;
+}
+
+.banBtn {
+  color: var(--color-error) !important;
+  border-color: color-mix(in srgb, var(--color-error) 30%, white) !important;
+}
+
+.banBtn:hover {
+  background-color: var(--color-error-light) !important;
+}
+
+.activateBtn {
+  color: var(--color-secondary) !important;
+  border-color: color-mix(in srgb, var(--color-secondary) 30%, white) !important;
+}
+
+.activateBtn:hover {
+  background-color: var(--color-secondary-light) !important;
+}
+
+/* Loading & Empty states */
+.tableLoading {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-secondary);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 999px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: var(--space-2);
+}
+
+.tableEmpty {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.pageText {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Modal Specifics ───────────────────────────────────────────────────── */
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 500px;
+}
+
+.warningAlert {
+  display: flex;
+  align-items: start;
+  gap: var(--space-3);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-error) 15%, transparent);
+}
+
+.warningAlert h4 {
+  font-size: var(--text-sm);
+  color: var(--color-error);
+  margin-bottom: 2px;
+}
+
+.warningAlert p {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  line-height: var(--leading-normal);
+}
+
+.modalFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modalFormGroup label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.modalTextarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  background-color: var(--color-card);
+  color: var(--color-text);
+  outline: none;
+  resize: vertical;
+}
+
+.modalTextarea:focus {
+  border-color: var(--color-border-focus);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-4);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Responsive Adjustments ────────────────────────────────────────────── */
+
+@media (max-width: 992px) {
+  .filtersLayout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchBox {
+    max-width: none;
+  }
+
+  .selectsRow {
+    justify-content: space-between;
+  }
+
+  .selectGroup {
+    flex: 1;
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .actionsCell {
+    flex-direction: column;
+  }
+
+  .selectsRow {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

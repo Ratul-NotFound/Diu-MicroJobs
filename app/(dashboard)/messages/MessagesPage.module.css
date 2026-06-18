@@ -1,0 +1,284 @@
+.container {
+  width: 100%;
+}
+
+.inboxCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.inboxLayout {
+  display: flex;
+  height: 70vh;
+  min-height: 550px;
+}
+
+.sidebar {
+  width: 320px;
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.sidebarHeader {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.sidebarTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+
+.convList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.convItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+
+.convItem:hover {
+  background-color: var(--color-card-hover);
+}
+
+.convItemActive {
+  background-color: var(--color-primary-light);
+}
+
+.convInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.convHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.partnerName {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.convTime {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.convText {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.emptyInbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) 0;
+  color: var(--color-text-muted);
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
+.chatPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-card);
+}
+
+.chatHeader {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-card);
+}
+
+.partnerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.partnerHeaderName {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.partnerHeaderRole {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.jobBadge {
+  font-size: var(--text-xs);
+  max-width: 250px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.messagesStream {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background-color: var(--color-bg);
+}
+
+.bubbleWrapper {
+  display: flex;
+  width: 100%;
+}
+
+.bubbleMe {
+  justify-content: flex-end;
+}
+
+.bubblePartner {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  max-width: 70%;
+  position: relative;
+  box-shadow: var(--shadow-xs);
+}
+
+.bubbleMe .messageBubble {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-top-right-radius: var(--radius-xs);
+}
+
+.bubblePartner .messageBubble {
+  background-color: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-top-left-radius: var(--radius-xs);
+}
+
+.messageText {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  word-break: break-word;
+}
+
+.messageTime {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 9px;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.bubbleMe .messageTime {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.bubblePartner .messageTime {
+  color: var(--color-text-muted);
+}
+
+.emptyMessages, .noActiveChat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-12) var(--space-6);
+}
+
+.noActiveChat h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.noActiveChat p {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  max-width: 300px;
+}
+
+.chatInputForm {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  display: flex;
+  gap: var(--space-3);
+}
+
+.chatInput {
+  flex: 1;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.chatInput:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-card);
+}
+
+.sendButton {
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
