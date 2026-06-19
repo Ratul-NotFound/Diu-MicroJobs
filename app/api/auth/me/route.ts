@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     const user = await User.findOne({ firebaseUid: decoded.uid });
     if (!user) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
+      return NextResponse.json({ user: null, admin: null });
     }
 
     // Check if user is also an admin
