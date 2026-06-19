@@ -11,7 +11,7 @@ import styles from './RegisterPage.module.css';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, userProfile, firebaseUser, loading } = useAuth();
+  const { register, userProfile, firebaseUser, loading, profileChecked } = useAuth();
   const { addToast } = useToast();
 
   const [step, setStep] = useState(1);
@@ -27,19 +27,19 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Only redirect to dashboard if the user profile is completely registered in MongoDB
-    if (!loading && userProfile) {
+    // Only redirect to dashboard once the profile is fully loaded
+    if (!loading && profileChecked && userProfile) {
       router.push('/dashboard');
     }
-  }, [userProfile, loading, router]);
+  }, [loading, profileChecked, userProfile, router]);
 
   useEffect(() => {
-    // If user is authenticated on Firebase but profile is not created in MongoDB (e.g. Google Login),
-    // skip step 1 and show the profile details form (step 2) directly.
-    if (firebaseUser && !userProfile) {
+    // If user is authenticated on Firebase but has no MongoDB profile yet (e.g. Google login),
+    // skip step 1 and jump directly to the profile details form
+    if (!loading && profileChecked && firebaseUser && !userProfile) {
       setStep(2);
     }
-  }, [firebaseUser, userProfile]);
+  }, [loading, profileChecked, firebaseUser, userProfile]);
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +114,14 @@ export default function RegisterPage() {
     { value: 'faculty', label: 'Faculty / Teacher (Client only)' },
     { value: 'department', label: 'Department Office (Client only)' },
   ];
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -203,8 +211,13 @@ export default function RegisterPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setStep(1)}
-              disabled={isSubmitting}
+              onClick={() => {
+                // Only allow going back if the user is NOT already authenticated via Firebase
+                if (!firebaseUser) {
+                  setStep(1);
+                }
+              }}
+              disabled={isSubmitting || !!firebaseUser}
             >
               Back
             </Button>

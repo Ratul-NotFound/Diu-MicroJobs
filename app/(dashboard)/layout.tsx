@@ -20,19 +20,20 @@ import { Skeleton } from '@/components/ui';
 export default function AppDashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { firebaseUser, userProfile, adminProfile, loading, logout, isAdmin } = useAuth();
+  const { firebaseUser, userProfile, adminProfile, loading, profileChecked, logout, isAdmin } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && profileChecked) {
       if (!firebaseUser) {
         router.push('/login');
       } else if (!userProfile) {
         router.push('/register');
       }
     }
-  }, [firebaseUser, userProfile, loading, router]);
+  }, [firebaseUser, userProfile, loading, profileChecked, router]);
 
-  if (loading) {
+  // Show skeleton while loading session or fetching profile
+  if (loading || !profileChecked) {
     return (
       <div style={{ padding: 'var(--space-12)', maxWidth: 'var(--max-content-width)', margin: '0 auto' }}>
         <Skeleton height="64px" width="100%" borderRadius="var(--radius-lg)" />

@@ -10,7 +10,7 @@ import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogle, userProfile, firebaseUser, loading } = useAuth();
+  const { login, loginWithGoogle, userProfile, firebaseUser, loading, profileChecked } = useAuth();
   const { addToast } = useToast();
 
   const [email, setEmail] = useState('');
@@ -18,16 +18,17 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // If user profile is loaded, redirect to dashboard.
-    // If authenticated on Firebase but profile doesn't exist in MongoDB, redirect to register to complete profile.
-    if (!loading && firebaseUser) {
+    // Wait until Firebase session is restored AND the MongoDB profile fetch is done
+    if (!loading && profileChecked) {
       if (userProfile) {
+        // Existing registered user → go to dashboard
         router.push('/dashboard');
-      } else {
+      } else if (firebaseUser) {
+        // Firebase account exists but no MongoDB profile → complete registration
         router.push('/register');
       }
     }
-  }, [userProfile, firebaseUser, loading, router]);
+  }, [loading, profileChecked, userProfile, firebaseUser, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,12 +40,10 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      addToast('Welcome back!', 'success');
-      router.push('/dashboard');
+      // Navigation is handled by the useEffect above after auth state settles
     } catch (err) {
       console.error(err);
       addToast(err instanceof Error ? err.message : 'Invalid email or password', 'error');
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -53,15 +52,22 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await loginWithGoogle();
-      addToast('Signed in successfully!', 'success');
-      router.push('/dashboard');
+      // Navigation is handled by the useEffect above after auth state settles
     } catch (err) {
       console.error(err);
       addToast(err instanceof Error ? err.message : 'Google sign-in failed', 'error');
-    } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading state while auth is being resolved
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

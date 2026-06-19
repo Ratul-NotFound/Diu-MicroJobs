@@ -55,7 +55,10 @@ interface AuthContextType {
   firebaseUser: FirebaseUser | null;
   userProfile: UserProfile | null;
   adminProfile: AdminProfile | null;
+  /** True while Firebase is restoring session OR we are fetching the MongoDB profile */
   loading: boolean;
+  /** True when Firebase user exists but MongoDB profile fetch is complete (profile may be null) */
+  profileChecked: boolean;
   isAdmin: boolean;
 
   // Auth methods
@@ -80,34 +83,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
+  // loading = Firebase session is being restored
   const [loading, setLoading] = useState(true);
+  // profileChecked = we have finished the MongoDB profile lookup for the current user
+  const [profileChecked, setProfileChecked] = useState(false);
 
   const isAdmin = adminProfile !== null && adminProfile.status === 'active';
 
-  /** Fetch user profile from MongoDB */
+  /** Fetch user profile from MongoDB — silently sets null on no profile */
   const fetchProfile = useCallback(async () => {
-    const { data } = await apiClient<{ user: UserProfile; admin: AdminProfile | null }>('/api/auth/me');
-    if (data) {
-      setUserProfile(data.user);
-      setAdminProfile(data.admin);
-    }
-  }, []);
-
-  /** Listen to Firebase auth state changes */
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setFirebaseUser(user);
-
-      if (user) {
-        try {
-          await fetchProfile();
-        } catch {
-          // Profile might not exist yet (first login)
-          console.log('Profile not found — may need registration');
-        }
+    try {
+      const { data } = await apiClient<{ user: UserProfile | null; admin: AdminProfile | null }>('/api/auth/me');
+      if (data) {
+        setUserProfile(data.user);
+        setAdminProfile(data.admin);
       } else {
         setUserProfile(null);
         setAdminProfile(null);
+      }
+    } catch {
+      setUserProfile(null);
+      setAdminProfile(null);
+    } finally {
+      setProfileChecked(true);
+    }
+  }, []);
+
+  /** Listen to Firebase auth state changes (runs once on mount) */
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setFirebaseUser(user);
+      setProfileChecked(false);
+
+      if (user) {
+        await fetchProfile();
+      } else {
+        setUserProfile(null);
+        setAdminProfile(null);
+        setProfileChecked(true);
       }
 
       setLoading(false);
@@ -116,60 +129,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, [fetchProfile]);
 
-  /** Email + password login */
+  /** Email + password login — does NOT navigate; lets the page redirect */
   const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } finally {
-      setLoading(false);
-    }
+    await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged will fire and call fetchProfile automatically
   };
 
   /** Google sign-in */
   const loginWithGoogle = async () => {
-    setLoading(true);
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } finally {
-      setLoading(false);
-    }
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+    // onAuthStateChanged will fire and call fetchProfile automatically
   };
 
-  /** Register new user */
+  /** Register new user — creates Firebase account then MongoDB document */
   const register = async (email: string, password: string, profileData: RegisterData) => {
-    setLoading(true);
-    try {
-      let user = auth.currentUser;
+    let user = auth.currentUser;
 
-      if (!user) {
-        // Create Firebase auth account
-        const credential = await createUserWithEmailAndPassword(auth, email, password);
-        user = credential.user;
-      }
-
-      // Update Firebase profile display name if not set
-      if (user && !user.displayName) {
-        await updateProfile(user, { displayName: profileData.displayName });
-      }
-
-      // Create MongoDB user document
-      await apiClient('/api/auth/register', {
-        method: 'POST',
-        body: {
-          displayName: profileData.displayName,
-          role: profileData.role,
-          department: profileData.department,
-          studentId: profileData.studentId || '',
-        },
-      });
-
-      // Fetch the newly created profile
-      await fetchProfile();
-    } finally {
-      setLoading(false);
+    if (!user) {
+      // Create a new Firebase auth account
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      user = credential.user;
     }
+
+    // Update Firebase display name if not set
+    if (user && !user.displayName) {
+      await updateProfile(user, { displayName: profileData.displayName });
+    }
+
+    // Create the MongoDB user document
+    const { error } = await apiClient('/api/auth/register', {
+      method: 'POST',
+      body: {
+        displayName: profileData.displayName,
+        role: profileData.role,
+        department: profileData.department,
+        studentId: profileData.studentId || '',
+      },
+    });
+
+    if (error) {
+      throw new Error(error);
+    }
+
+    // Re-fetch to populate userProfile state
+    await fetchProfile();
   };
 
   /** Sign out */
@@ -177,6 +181,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await firebaseSignOut(auth);
     setUserProfile(null);
     setAdminProfile(null);
+    setProfileChecked(false);
   };
 
   /** Password reset */
@@ -198,6 +203,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userProfile,
         adminProfile,
         loading,
+        profileChecked,
         isAdmin,
         login,
         loginWithGoogle,
