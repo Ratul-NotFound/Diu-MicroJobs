@@ -14,6 +14,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { apiClient } from '@/lib/api-client';
+import { isDiuEmail } from '@/lib/utils';
 
 /** User profile from MongoDB */
 interface UserProfile {
@@ -138,8 +139,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /** Google sign-in */
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    // onAuthStateChanged will fire and call fetchProfile automatically
+    const result = await signInWithPopup(auth, provider);
+    const email = result.user.email;
+    if (email && !isDiuEmail(email)) {
+      await firebaseSignOut(auth);
+      throw new Error('Access restricted: Please log in using your official DIU Google Account (@diu.edu.bd, @daffodilvarsity.edu.bd, or @s.diu.edu.bd)');
+    }
   };
 
   /** Register new user — creates Firebase account then MongoDB document */

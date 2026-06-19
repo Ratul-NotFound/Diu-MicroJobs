@@ -191,6 +191,7 @@ export default function RegisterPage() {
             options={departmentOptions}
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
+            placeholder="Select Department / Office"
             required
             disabled={isSubmitting}
           />

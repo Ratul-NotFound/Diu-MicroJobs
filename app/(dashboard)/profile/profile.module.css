@@ -351,6 +351,39 @@
   }
 }
 
+.uploadRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.uploadInputWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.fileInput {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.uploadStatusText {
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  font-weight: var(--weight-medium);
+  margin-top: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 /* ─── Responsive Adjustments ────────────────────────────────────────────── */
 
 @media (max-width: 768px) {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
+import { isDiuEmail } from '@/lib/utils';
 
 /**
  * POST /api/auth/register
@@ -10,12 +11,15 @@ import User from '@/models/User';
 export async function POST(request: Request) {
   try {
     const decoded = await verifyAuth(request);
+    if (decoded.email && !isDiuEmail(decoded.email)) {
+      return NextResponse.json({ error: 'Only official DIU email addresses are permitted' }, { status: 403 });
+    }
     await connectDB();
 
     // Check if user already exists
     const existingUser = await User.findOne({ firebaseUid: decoded.uid });
     if (existingUser) {
-      return NextResponse.json({ error: 'User already registered' }, { status: 409 });
+      return NextResponse.json({ user: existingUser }, { status: 200 });
     }
 
     const body = await request.json();

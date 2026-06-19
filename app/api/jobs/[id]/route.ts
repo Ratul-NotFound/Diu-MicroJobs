@@ -61,6 +61,19 @@ export async function PATCH(
     }
 
     const body = await request.json();
+
+    // Validate status updates
+    if (body.status !== undefined) {
+      const allowedStatusTransitions = ['draft', 'pending_review', 'cancelled'];
+      if (!allowedStatusTransitions.includes(body.status)) {
+        return NextResponse.json({ error: 'Directly transitioning to this status is not allowed' }, { status: 400 });
+      }
+
+      if (['contracted', 'in_progress', 'delivered', 'completed', 'disputed'].includes(job.status)) {
+        return NextResponse.json({ error: 'Cannot change status of an active contract or completed job' }, { status: 400 });
+      }
+    }
+
     const allowedUpdates = [
       'title', 'description', 'category', 'subcategory', 'budget',
       'deadline', 'skills', 'urgency', 'attachments', 'status',

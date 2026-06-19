@@ -66,6 +66,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'You are not authorized to review this contract' }, { status: 403 });
     }
 
+    // Validate reviewee is the other party of the contract
+    const expectedRevieweeId = isClient ? contract.freelancer.toString() : contract.client.toString();
+    if (revieweeId !== expectedRevieweeId) {
+      return NextResponse.json({ error: 'Invalid reviewee for this contract' }, { status: 400 });
+    }
+
+    // Validate rating range
+    const isOutOfRange = (val?: number) => val !== undefined && (val < 1 || val > 5);
+    if (isOutOfRange(rating) || isOutOfRange(communication) || isOutOfRange(quality) || isOutOfRange(timeliness)) {
+      return NextResponse.json({ error: 'Ratings must be between 1 and 5' }, { status: 400 });
+    }
+
     // Check if reviewer already left a review for this contract
     const existing = await Review.findOne({
       contract: contractId,

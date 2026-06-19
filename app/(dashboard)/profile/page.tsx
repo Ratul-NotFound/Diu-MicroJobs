@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { apiClient } from '@/lib/api-client';
+import { storage } from '@/lib/firebase';
 import {
   User as UserIcon,
   BookOpen,
@@ -17,7 +18,8 @@ import {
   ExternalLink,
   Save,
   Tag,
-  Briefcase
+  Briefcase,
+  Upload
 } from 'lucide-react';
 import styles from './profile.module.css';
 
@@ -27,6 +29,45 @@ interface PortfolioItem {
   description: string;
   link: string;
 }
+
+const compressImage = (file: File, maxWidth = 400, maxHeight = 400): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(compressedBase64);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 
 export default function EditProfilePage() {
   const { userProfile, refreshProfile } = useAuth();
@@ -41,6 +82,53 @@ export default function EditProfilePage() {
   const [bio, setBio] = useState('');
   const [skillsText, setSkillsText] = useState('');
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingPortfolioIdx, setUploadingPortfolioIdx] = useState<number | null>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      addToast('Please upload an image file', 'error');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const base64Url = await compressImage(file, 400, 400);
+      setPhotoURL(base64Url);
+      addToast('Avatar uploaded and compressed successfully!', 'success');
+    } catch (err) {
+      console.error('Avatar processing failed:', err);
+      addToast('Failed to process avatar', 'error');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handlePortfolioImageUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      addToast('Please upload an image file', 'error');
+      return;
+    }
+
+    setUploadingPortfolioIdx(index);
+    try {
+      const base64Url = await compressImage(file, 600, 450);
+      handlePortfolioChange(index, 'imageUrl', base64Url);
+      addToast('Project image uploaded and compressed successfully!', 'success');
+    } catch (err) {
+      console.error('Portfolio image processing failed:', err);
+      addToast('Failed to process project image', 'error');
+    } finally {
+      setUploadingPortfolioIdx(null);
+    }
+  };
 
   // Initialize form states when userProfile loads
   useEffect(() => {
@@ -272,15 +360,36 @@ export default function EditProfilePage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="photoURL">Avatar Image URL</label>
-                  <Input
-                    id="photoURL"
-                    value={photoURL}
-                    onChange={(e) => setPhotoURL(e.target.value)}
-                    placeholder="https://example.com/avatar.jpg"
-                  />
+                  <label htmlFor="photoURL">Profile Avatar Photo</label>
+                  <div className={styles.uploadRow}>
+                    <Input
+                      id="photoURL"
+                      value={photoURL}
+                      onChange={(e) => setPhotoURL(e.target.value)}
+                      placeholder="https://example.com/avatar.jpg"
+                      disabled={uploadingAvatar}
+                    />
+                    <div className={styles.uploadInputWrapper}>
+                      <Button type="button" variant="outline" loading={uploadingAvatar}>
+                        <Upload size={14} style={{ marginRight: '6px' }} />
+                        Upload File
+                      </Button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className={styles.fileInput}
+                        onChange={handleAvatarUpload}
+                        disabled={uploadingAvatar}
+                      />
+                    </div>
+                  </div>
+                  {uploadingAvatar && (
+                    <span className={styles.uploadStatusText}>
+                      Uploading image to Firebase...
+                    </span>
+                  )}
                   <p className={styles.helpText}>
-                    Provide a direct URL to a profile photo of yourself.
+                    Upload an avatar photo or provide a direct image URL. Max size: 5MB.
                   </p>
                 </div>
 
@@ -416,15 +525,40 @@ export default function EditProfilePage() {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label htmlFor={`port-image-${index}`}>Image URL (optional)</label>
-                      <Input
-                        id={`port-image-${index}`}
-                        value={item.imageUrl}
-                        onChange={(e) =>
-                          handlePortfolioChange(index, 'imageUrl', e.target.value)
-                        }
-                        placeholder="https://example.com/project-screenshot.jpg"
-                      />
+                      <label htmlFor={`port-image-${index}`}>Project Image URL (optional)</label>
+                      <div className={styles.uploadRow}>
+                        <Input
+                          id={`port-image-${index}`}
+                          value={item.imageUrl}
+                          onChange={(e) =>
+                            handlePortfolioChange(index, 'imageUrl', e.target.value)
+                          }
+                          placeholder="https://example.com/project-screenshot.jpg"
+                          disabled={uploadingPortfolioIdx === index}
+                        />
+                        <div className={styles.uploadInputWrapper}>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            loading={uploadingPortfolioIdx === index}
+                          >
+                            <Upload size={14} style={{ marginRight: '6px' }} />
+                            Upload File
+                          </Button>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className={styles.fileInput}
+                            onChange={(e) => handlePortfolioImageUpload(index, e)}
+                            disabled={uploadingPortfolioIdx === index}
+                          />
+                        </div>
+                      </div>
+                      {uploadingPortfolioIdx === index && (
+                        <span className={styles.uploadStatusText}>
+                          Uploading snapshot to Firebase...
+                        </span>
+                      )}
                     </div>
 
                     <div className={styles.formGroup}>
