@@ -141,11 +141,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, profileData: RegisterData) => {
     setLoading(true);
     try {
-      // Create Firebase auth account
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      let user = auth.currentUser;
 
-      // Update Firebase profile display name
-      await updateProfile(credential.user, { displayName: profileData.displayName });
+      if (!user) {
+        // Create Firebase auth account
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
+        user = credential.user;
+      }
+
+      // Update Firebase profile display name if not set
+      if (user && !user.displayName) {
+        await updateProfile(user, { displayName: profileData.displayName });
+      }
 
       // Create MongoDB user document
       await apiClient('/api/auth/register', {

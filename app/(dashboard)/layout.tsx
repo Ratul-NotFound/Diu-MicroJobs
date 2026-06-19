@@ -23,10 +23,14 @@ export default function AppDashboardLayout({ children }: { children: React.React
   const { firebaseUser, userProfile, adminProfile, loading, logout, isAdmin } = useAuth();
 
   useEffect(() => {
-    if (!loading && !firebaseUser) {
-      router.push('/login');
+    if (!loading) {
+      if (!firebaseUser) {
+        router.push('/login');
+      } else if (!userProfile) {
+        router.push('/register');
+      }
     }
-  }, [firebaseUser, loading, router]);
+  }, [firebaseUser, userProfile, loading, router]);
 
   if (loading) {
     return (

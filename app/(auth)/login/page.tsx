@@ -18,9 +18,14 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // If user profile is loaded, redirect to dashboard
-    if (!loading && (userProfile || firebaseUser)) {
-      router.push('/dashboard');
+    // If user profile is loaded, redirect to dashboard.
+    // If authenticated on Firebase but profile doesn't exist in MongoDB, redirect to register to complete profile.
+    if (!loading && firebaseUser) {
+      if (userProfile) {
+        router.push('/dashboard');
+      } else {
+        router.push('/register');
+      }
     }
   }, [userProfile, firebaseUser, loading, router]);
 

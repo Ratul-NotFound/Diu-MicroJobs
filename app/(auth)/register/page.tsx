@@ -27,10 +27,19 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && (userProfile || firebaseUser)) {
+    // Only redirect to dashboard if the user profile is completely registered in MongoDB
+    if (!loading && userProfile) {
       router.push('/dashboard');
     }
-  }, [userProfile, firebaseUser, loading, router]);
+  }, [userProfile, loading, router]);
+
+  useEffect(() => {
+    // If user is authenticated on Firebase but profile is not created in MongoDB (e.g. Google Login),
+    // skip step 1 and show the profile details form (step 2) directly.
+    if (firebaseUser && !userProfile) {
+      setStep(2);
+    }
+  }, [firebaseUser, userProfile]);
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
