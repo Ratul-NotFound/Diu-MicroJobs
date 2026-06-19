@@ -1,6 +1,6 @@
 import { auth } from './firebase';
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL || '';
+const API_BASE = ''; // Use relative paths for client-side API calls to work on any origin
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
