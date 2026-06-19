@@ -200,8 +200,11 @@ export function Navbar({ user, notificationCount = 0, onLogout, onMenuToggle }: 
         <button
           className={styles.hamburger}
           onClick={() => {
-            setMobileOpen(true);
-            onMenuToggle?.();
+            if (onMenuToggle) {
+              onMenuToggle();
+            } else {
+              setMobileOpen(true);
+            }
           }}
           aria-label="Open navigation menu"
         >

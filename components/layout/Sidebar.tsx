@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
+import { Sun, Moon, LogOut } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 import styles from './Sidebar.module.css';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -40,6 +42,8 @@ export interface SidebarProps {
   isOpen?: boolean;
   /** Called when the mobile overlay is clicked. */
   onClose?: () => void;
+  /** Callback when user logs out. */
+  onLogout?: () => void;
 }
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
@@ -65,7 +69,8 @@ function getInitials(name?: string | null): string {
  * - Shows a user mini-card at the bottom.
  * - Becomes a slide-over overlay on mobile.
  */
-export function Sidebar({ sections, activeHref, user, isOpen = false, onClose }: SidebarProps) {
+export function Sidebar({ sections, activeHref, user, isOpen = false, onClose, onLogout }: SidebarProps) {
+  const { theme, toggleTheme } = useTheme();
   return (
     <>
       {/* Mobile backdrop */}
@@ -119,6 +124,29 @@ export function Sidebar({ sections, activeHref, user, isOpen = false, onClose }:
               <div className={styles.userName}>{user.displayName}</div>
               <div className={styles.userRole}>{user.role}</div>
             </div>
+          </div>
+        )}
+
+        {/* Mobile-only actions (Theme Toggle & Logout) */}
+        {user && (
+          <div className={styles.sidebarActions}>
+            <button
+              className={styles.sidebarActionBtn}
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            >
+              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+              <span>{theme === 'light' ? 'Dark Theme' : 'Light Theme'}</span>
+            </button>
+            {onLogout && (
+              <button
+                className={`${styles.sidebarActionBtn} ${styles.logoutBtn}`}
+                onClick={onLogout}
+              >
+                <LogOut size={16} />
+                <span>Log Out</span>
+              </button>
+            )}
           </div>
         )}
       </aside>

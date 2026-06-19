@@ -163,3 +163,20 @@
   color: var(--color-primary-hover);
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .selectsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .filterSelect {
+    width: 100%;
+  }
+
+  .budgetInput {
+    width: 100%;
+    grid-column: span 2;
+  }
+}

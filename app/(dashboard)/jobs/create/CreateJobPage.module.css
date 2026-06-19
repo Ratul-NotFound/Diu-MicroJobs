@@ -75,3 +75,9 @@
   margin-top: var(--space-4);
   flex-wrap: wrap;
 }
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-4);
+  }
+}

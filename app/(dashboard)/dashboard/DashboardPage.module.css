@@ -317,3 +317,20 @@
   gap: var(--space-4);
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .welcomeHero {
+    padding: var(--space-4) var(--space-5);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .heroActions {
+    width: 100%;
+  }
+
+  .actionBtn {
+    flex: 1;
+    justify-content: center;
+  }
+}

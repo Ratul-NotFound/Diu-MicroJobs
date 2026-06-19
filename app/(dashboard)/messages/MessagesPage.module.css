@@ -282,3 +282,63 @@
   justify-content: center;
   flex-shrink: 0;
 }
+
+.backButton {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .inboxLayout {
+    height: 75vh;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .sidebarHiddenMobile {
+    display: none !important;
+  }
+
+  .chatPane {
+    width: 100%;
+  }
+
+  .chatPaneHiddenMobile {
+    display: none !important;
+  }
+
+  .backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    margin-right: var(--space-3);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .backButton:hover {
+    background-color: var(--color-bg-alt);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+
+  .chatHeader {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .messagesStream {
+    padding: var(--space-4);
+  }
+
+  .chatInputForm {
+    padding: var(--space-3) var(--space-4);
+  }
+}

@@ -379,3 +379,28 @@
   gap: var(--space-6);
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .jobCard, .proposalsCard, .myProposalCard {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 580px) {
+  .headerTitleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .proposalHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .bidMeta {
+    text-align: left;
+    align-items: flex-start;
+  }
+}

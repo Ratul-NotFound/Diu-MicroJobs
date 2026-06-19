@@ -11,7 +11,9 @@ import {
   Laptop, Palette, Camera, FileText, Search,
   Users, Award, ShieldCheck, TrendingUp, ArrowRight,
   Briefcase, Layers, GraduationCap, Star, Check, Zap,
-  MessageSquare, Clock, Globe2, ChevronRight
+  MessageSquare, Clock, Globe2, ChevronRight,
+  PenTool, Cpu, BookOpen,
+  ClipboardList, Calendar, Truck
 } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -25,6 +27,13 @@ const ICON_MAP: Record<string, any> = {
   Search,
   GraduationCap,
   Briefcase,
+  PenTool,
+  Cpu,
+  BookOpen,
+  ClipboardList,
+  Calendar,
+  Truck,
+  Award,
 };
 
 function getCategoryIcon(iconName: string) {

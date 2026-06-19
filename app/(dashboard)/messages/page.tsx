@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { useToast } from '@/components/ui/Toast';
 import { Card, Button, Input, Avatar, Skeleton, Badge } from '@/components/ui';
-import { Send, MessageSquare, Search } from 'lucide-react';
+import { Send, MessageSquare, Search, ArrowLeft } from 'lucide-react';
 import { timeAgo } from '@/lib/utils';
 import styles from './MessagesPage.module.css';
 
@@ -160,7 +160,7 @@ export default function MessagesPage() {
         <div className={styles.inboxLayout}>
           
           {/* Conversation List Sidebar */}
-          <div className={styles.sidebar}>
+          <div className={`${styles.sidebar} ${activeConversation ? styles.sidebarHiddenMobile : ''}`}>
             <div className={styles.sidebarHeader}>
               <h3 className={styles.sidebarTitle}>Chats</h3>
             </div>
@@ -210,11 +210,19 @@ export default function MessagesPage() {
           </div>
 
           {/* Active Chat Pane */}
-          <div className={styles.chatPane}>
+          <div className={`${styles.chatPane} ${!activeConversation ? styles.chatPaneHiddenMobile : ''}`}>
             {activeConversation ? (
               <>
                 {/* Chat Pane Header */}
                 <div className={styles.chatHeader}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveConversation(null)}
+                    className={styles.backButton}
+                    aria-label="Back to conversations"
+                  >
+                    <ArrowLeft size={20} />
+                  </button>
                   <div className={styles.partnerInfo}>
                     <Avatar
                       name={getChatPartner(activeConversation).displayName}

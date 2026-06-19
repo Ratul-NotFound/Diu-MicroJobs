@@ -80,6 +80,7 @@ export function DashboardLayout({
           user={user}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          onLogout={onLogout}
         />
 
         <main className={styles.content}>

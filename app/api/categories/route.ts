@@ -6,7 +6,7 @@ export async function GET() {
   try {
     await connectDB();
 
-    const categories = await Category.find({ isActive: true })
+    const categories = await Category.find({ isActive: { $ne: false } })
       .sort({ order: 1 })
       .lean();
 
