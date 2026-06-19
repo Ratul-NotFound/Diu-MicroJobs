@@ -14,10 +14,17 @@ function getAdminAuth() {
     throw new Error('Firebase Admin environment variables (FIREBASE_ADMIN_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL, FIREBASE_ADMIN_PRIVATE_KEY) must be defined');
   }
 
+  let formattedPrivateKey = privateKey;
+  if (formattedPrivateKey.startsWith('"') && formattedPrivateKey.endsWith('"')) {
+    formattedPrivateKey = formattedPrivateKey.slice(1, -1);
+  } else if (formattedPrivateKey.startsWith("'") && formattedPrivateKey.endsWith("'")) {
+    formattedPrivateKey = formattedPrivateKey.slice(1, -1);
+  }
+
   const serviceAccount: ServiceAccount = {
     projectId,
     clientEmail,
-    privateKey: privateKey.replace(/\\n/g, '\n'),
+    privateKey: formattedPrivateKey.replace(/\\n/g, '\n'),
   };
 
   const adminApp = getApps().length > 0 ? getApp() : initializeApp({ credential: cert(serviceAccount) });
