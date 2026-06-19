@@ -74,6 +74,77 @@
   justify-content: space-between;
   padding: var(--space-5);
   height: 100%;
+  overflow: hidden;
+}
+
+.cardThumbnailWrapper {
+  margin-top: calc(-1 * var(--space-5));
+  margin-left: calc(-1 * var(--space-5));
+  margin-right: calc(-1 * var(--space-5));
+  margin-bottom: var(--space-4);
+  height: 160px;
+  overflow: hidden;
+  border-top-left-radius: calc(var(--radius-xl) - 1px);
+  border-top-right-radius: calc(var(--radius-xl) - 1px);
+  position: relative;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.cardThumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.jobCard:hover .cardThumbnail {
+  transform: scale(1.06);
+}
+
+.cardThumbnailPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  padding: var(--space-4);
+  gap: var(--space-2);
+}
+
+.placeholderCategoryIcon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.placeholderCategoryName {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* Category slug gradients */
+.web-app-dev { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+.design { background: linear-gradient(135deg, #4c1d95, #8b5cf6); }
+.photography { background: linear-gradient(135deg, #7c2d12, #f97316); }
+.videography { background: linear-gradient(135deg, #831843, #ec4899); }
+.slides-docs { background: linear-gradient(135deg, #064e3b, #10b981); }
+.research { background: linear-gradient(135deg, #115e59, #14b8a6); }
+.tutoring { background: linear-gradient(135deg, #312e81, #6366f1); }
+.drawing-drafting { background: linear-gradient(135deg, #155e75, #06b6d4); }
+.project-making { background: linear-gradient(135deg, #1f2937, #4b5563); }
+.thesis-academic-writing { background: linear-gradient(135deg, #991b1b, #ef4444); }
+.assignment-lab-help { background: linear-gradient(135deg, #1e3a8a, #7c3aed); }
+.general { background: linear-gradient(135deg, #4f46e5, #06b6d4); }
+
+.cardContentWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .cardHeader {

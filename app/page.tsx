@@ -10,16 +10,35 @@ import { apiClient } from '@/lib/api-client';
 import {
   Laptop, Palette, Camera, FileText, Search,
   Users, Award, ShieldCheck, TrendingUp, ArrowRight,
-  Briefcase, Layers, GraduationCap, Star, Check, Zap,
-  MessageSquare, Clock, Globe2, ChevronRight,
+  Briefcase, Layers, GraduationCap, Star, Zap,
+  MessageSquare, Clock, Globe2, ChevronRight, ChevronDown,
   PenTool, Cpu, BookOpen,
-  ClipboardList, Calendar, Truck
+  ClipboardList, Calendar, Truck,
+  Video, Edit, Settings, Package, Film,
 } from 'lucide-react';
 import styles from './page.module.css';
 
 const ACCENT_COLORS = ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
 
 const ICON_MAP: Record<string, any> = {
+  // names as stored in MongoDB `icon` field
+  code: Laptop,
+  palette: Palette,
+  camera: Camera,
+  video: Video,
+  'file-text': FileText,
+  'pen-tool': PenTool,
+  search: Search,
+  book: BookOpen,
+  cpu: Cpu,
+  briefcase: Briefcase,
+  clipboard: ClipboardList,
+  calendar: Calendar,
+  package: Package,
+  edit: Edit,
+  settings: Settings,
+  film: Film,
+  // legacy capitalised names (fallback)
   Laptop,
   Palette,
   Camera,
@@ -43,13 +62,23 @@ function getCategoryIcon(iconName: string) {
 /* ─── Static Data ────────────────────────────────────────────────────────── */
 
 const CATEGORIES = [
-  { id: 'web', name: 'Web & App Dev', icon: Laptop,    color: '#3b82f6', count: '120+' },
-  { id: 'design', name: 'Design',       icon: Palette,  color: '#ec4899', count: '85+' },
-  { id: 'photo',  name: 'Photography',  icon: Camera,   color: '#10b981', count: '60+' },
-  { id: 'docs',   name: 'Slides & Docs',icon: FileText, color: '#f59e0b', count: '94+' },
-  { id: 'research',name: 'Research',    icon: Search,   color: '#8b5cf6', count: '47+' },
-  { id: 'courses', name: 'Tutoring',    icon: GraduationCap, color: '#06b6d4', count: '33+' },
-] as const;
+  { id: 'web-app-dev',             name: 'Web & App Dev',            icon: Laptop,       color: '#3b82f6', count: '120+', subcategories: ['Portfolio Website Making', 'Landing Page Design', 'React / Next.js Development'] },
+  { id: 'design',                  name: 'Design',                   icon: Palette,      color: '#ec4899', count: '85+', subcategories: ['Logo Design', 'Poster Design', 'UI/UX Design (Figma)'] },
+  { id: 'photography',             name: 'Photography',              icon: Camera,       color: '#10b981', count: '60+', subcategories: ['Event Photography', 'Portrait Photography', 'Photo Editing & Retouching'] },
+  { id: 'videography',             name: 'Videography',              icon: Video,        color: '#f97316', count: '40+', subcategories: ['Video Editing', 'Short-Form Content', 'Animation'] },
+  { id: 'slides-docs',             name: 'Slides & Docs',            icon: FileText,     color: '#f59e0b', count: '94+', subcategories: ['PowerPoint Presentation', 'Google Slides', 'Pitch Deck Design'] },
+  { id: 'research',                name: 'Research',                 icon: Search,       color: '#8b5cf6', count: '47+', subcategories: ['Literature Review', 'Survey Design', 'Data Collection'] },
+  { id: 'tutoring',                name: 'Tutoring',                 icon: GraduationCap,color: '#06b6d4', count: '33+', subcategories: ['Math Tutoring', 'Programming Help', 'Physics Tutoring'] },
+  { id: 'drawing-drafting',        name: 'Drawing & Drafting',       icon: PenTool,      color: '#14b8a6', count: '28+', subcategories: ['Architectural Drawing', 'AutoCAD Drafting', 'Floor Plan Design'] },
+  { id: 'project-making',          name: 'Project Making',           icon: Cpu,          color: '#a855f7', count: '35+', subcategories: ['IoT Project', 'Arduino Project', 'DLD / Digital Circuit'] },
+  { id: 'thesis-academic-writing', name: 'Thesis & Academic Writing',icon: BookOpen,     color: '#0ea5e9', count: '52+', subcategories: ['Thesis Writing Assistance', 'Research Paper Writing', 'Assignment Writing'] },
+  { id: 'assignment-lab-help',     name: 'Assignment & Lab Help',    icon: ClipboardList,color: '#84cc16', count: '44+', subcategories: ['Programming Assignment Help', 'Math Assignments', 'Lab Report Help'] },
+  { id: 'career-resume-prep',      name: 'Career & Resume Prep',     icon: Briefcase,    color: '#f43f5e', count: '38+', subcategories: ['CV Making', 'Resume Making', 'LinkedIn Profile Optimization'] },
+  { id: 'content-writing',         name: 'Content Writing',          icon: Edit,         color: '#fb923c', count: '29+', subcategories: ['Blog / Article Writing', 'Social Media Content', 'Copywriting'] },
+  { id: 'event-campus-support',    name: 'Event & Campus Support',   icon: Calendar,     color: '#22d3ee', count: '21+', subcategories: ['Event Host / MC', 'Event Planning', 'Live Streaming Setup'] },
+  { id: 'campus-errands-delivery', name: 'Campus Errands & Delivery',icon: Truck,        color: '#4ade80', count: '18+', subcategories: ['Document Printing', 'Campus Food Delivery', 'Library Book Pickup'] },
+  { id: 'tech-digital-services',   name: 'Tech & Digital Services',  icon: Settings,     color: '#818cf8', count: '45+', subcategories: ['Laptop Setup', 'OS Installation', 'AI Automation'] },
+];
 
 const STATS = [
   { value: '500+',  label: 'Registered Students' },
@@ -103,6 +132,25 @@ const TESTIMONIALS = [
   },
 ] as const;
 
+const FAQS = [
+  {
+    q: "Who can register on DIU MicroJobs?",
+    a: "Only active students, faculty members, departments, and alumni of Daffodil International University can register. A verified @diu.edu.bd or @s.diu.edu.bd email address is strictly required."
+  },
+  {
+    q: "How do payments work?",
+    a: "All transactions are priced in BDT. Clients and freelancers agree on a budget and project terms directly. There are zero platform fees or middleman charges."
+  },
+  {
+    q: "What kind of tasks can I post?",
+    a: "Any campus-related task! From software development, UI/UX design, and presentation slides to event photography, videography, tutoring, and library book pickups."
+  },
+  {
+    q: "How does verification work?",
+    a: "We verify every account using DIU's official Google Workspace email verification. This ensures zero fake profiles and a highly secure campus marketplace."
+  }
+] as const;
+
 const FEATURES = [
   {
     icon: ShieldCheck,
@@ -132,6 +180,9 @@ export default function Home() {
   const router = useRouter();
   const { firebaseUser, userProfile, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({
@@ -143,6 +194,7 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
 
   useEffect(() => {
+    setIsMounted(true);
     async function loadData() {
       try {
         const [catRes, statsRes, testRes] = await Promise.all([
@@ -160,6 +212,30 @@ export default function Home() {
     }
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (!isMounted || typeof window === 'undefined') return;
+
+    const handleHashScroll = () => {
+      if (!window.location.hash) return;
+      const id = decodeURIComponent(window.location.hash.replace('#', ''));
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    // Delay slightly to allow full browser layout calculations after mounting
+    const timer = setTimeout(handleHashScroll, 100);
+
+    // Listen for hash changes dynamically (e.g. clicking the nav link while on the home page)
+    window.addEventListener('hashchange', handleHashScroll);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('hashchange', handleHashScroll);
+    };
+  }, [isMounted]);
 
   const handleSearch = () => {
     const q = searchQuery.trim();
@@ -183,17 +259,26 @@ export default function Home() {
 
   const activeCategories = categories.length > 0
     ? categories.map((cat, idx) => ({
-        id: cat._id,
+        id: (cat as any).slug || cat._id,
         name: cat.name,
         icon: getCategoryIcon(cat.icon),
         color: ACCENT_COLORS[idx % ACCENT_COLORS.length],
-        count: `${cat.jobCount || 0}+`
+        count: `${(cat as any).jobCount || 0}+`,
+        subcategories: (cat as any).subcategories || [],
       }))
     : CATEGORIES;
+
+  const displayedCategories = showAllCategories
+    ? activeCategories
+    : activeCategories.slice(0, 8);
 
   const activeTestimonials = testimonials.length > 0
     ? testimonials
     : TESTIMONIALS;
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -201,6 +286,8 @@ export default function Home() {
 
       {/* ─── HERO ────────────────────────────────────────────────────────── */}
       <section className={styles.hero} aria-label="Hero">
+        <div className={styles.heroBgImage} />
+        <div className={styles.heroBgOverlay} />
         <div className={styles.container}>
           <div className={styles.heroInner}>
             {/* Left */}
@@ -240,7 +327,7 @@ export default function Home() {
 
               <div className={styles.searchTags}>
                 <span className={styles.searchTagLabel}>Popular:</span>
-                {['Slide Deck', 'Logo Design', 'WordPress', 'Photography'].map((t) => (
+                {['CV Making', 'Resume Making', 'Portfolio Website', 'Logo Design', 'Video Editing'].map((t) => (
                   <button
                     key={t}
                     className={styles.searchTag}
@@ -264,44 +351,69 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right — Floating cards */}
+            {/* Right — Hero Image and Floating Stats */}
             <div className={styles.heroRight}>
-              <div className={styles.floatingCard}>
+              <div className={styles.heroImageWrapper}>
+                <img
+                  src="/images/campus_freelance_hero.png"
+                  alt="Diu MicroJobs Student Freelancing"
+                  className={styles.heroImage}
+                />
+                <div className={styles.heroOverlayGradient} />
+              </div>
+
+              {/* Floating stats card 1 */}
+              <div className={`${styles.floatingCard} ${styles.floatCard1}`}>
                 <div className={styles.floatingCardTop}>
                   <div className={styles.floatingCardIcon}>
                     <TrendingUp size={20} />
                   </div>
-                  <span className={styles.floatingCardLabel}>Platform Growth</span>
+                  <span className={styles.floatingCardLabel}>Completed Jobs</span>
                 </div>
                 <div className={styles.floatingCardValue}>1,200+</div>
-                <div className={styles.floatingCardSub}>MicroJobs completed this semester</div>
+                <div className={styles.floatingCardSub}>Student tasks completed this semester</div>
               </div>
 
-              <div className={styles.floatingCardRow}>
-                <div className={styles.floatingCard}>
-                  <div className={styles.floatingCardLabel} style={{ marginBottom: '8px' }}>Avg. Response</div>
-                  <div className={styles.floatingCardValue} style={{ fontSize: '1.5rem' }}>2.4h</div>
-                  <div className={styles.floatingCardSub}>Proposal received</div>
-                </div>
-                <div className={styles.floatingCard}>
-                  <div className={styles.floatingCardLabel} style={{ marginBottom: '8px' }}>Rating</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <div className={styles.floatingCardValue} style={{ fontSize: '1.5rem' }}>4.9</div>
-                    <Star size={16} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+              {/* Floating stats card 2 */}
+              <div className={`${styles.floatingCard} ${styles.floatCard2}`}>
+                <div className={styles.floatingCardTop}>
+                  <div className={styles.floatingCardIcon} style={{ background: 'rgba(245,158,11,0.15)', color: '#f59e0b' }}>
+                    <Star size={20} fill="#f59e0b" style={{ color: '#f59e0b' }} />
                   </div>
-                  <div className={styles.floatingCardSub}>Avg. freelancer rating</div>
+                  <span className={styles.floatingCardLabel}>Rating</span>
                 </div>
+                <div className={styles.floatingCardValue} style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                  4.9 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontWeight: 'normal' }}>/ 5.0</span>
+                </div>
+                <div className={styles.floatingCardSub}>Average student review</div>
               </div>
 
-              <div className={styles.floatingCard} style={{ background: 'rgba(29,192,113,0.12)', borderColor: 'rgba(29,192,113,0.25)' }}>
+              {/* Floating stats card 3 */}
+              <div className={`${styles.floatingCard} ${styles.floatCard3}`} style={{ background: 'rgba(29,192,113,0.12)', borderColor: 'rgba(29,192,113,0.25)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <ShieldCheck size={20} style={{ color: '#1dc071' }} />
+                  <ShieldCheck size={22} style={{ color: '#1dc071' }} />
                   <div>
-                    <div style={{ color: '#6ee7b7', fontSize: '0.875rem', fontWeight: 600 }}>100% DIU Verified</div>
-                    <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.75rem', marginTop: '2px' }}>Every account uses official DIU email</div>
+                    <div style={{ color: '#6ee7b7', fontSize: '0.8125rem', fontWeight: 600 }}>100% DIU Verified</div>
+                    <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.6875rem', marginTop: '2px' }}>Exclusively for Daffodil Students</div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BRAND TRUST BAR ────────────────────────────────────────────── */}
+      <section className={styles.brandBar} aria-label="Campus trust partners">
+        <div className={styles.container}>
+          <div className={styles.brandBarInner}>
+            <span className={styles.brandTrustLabel}>Trusted by campus groups:</span>
+            <div className={styles.brandLogos}>
+              <div className={styles.brandLogo}>DIU CSE Department</div>
+              <div className={styles.brandLogo}>DIU Business Club</div>
+              <div className={styles.brandLogo}>SWE Association</div>
+              <div className={styles.brandLogo}>DIU Robotics Club</div>
+              <div className={styles.brandLogo}>IEEE Student Branch</div>
             </div>
           </div>
         </div>
@@ -334,7 +446,7 @@ export default function Home() {
           </div>
 
           <div className={styles.categoryGrid}>
-            {activeCategories.map(({ id, name, icon: Icon, color, count }) => (
+            {displayedCategories.map(({ id, name, icon: Icon, color, count, subcategories }) => (
               <div
                 key={id}
                 className={styles.categoryCard}
@@ -344,19 +456,59 @@ export default function Home() {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') router.push(`/jobs?category=${id}`); }}
               >
-                <div className={styles.catIconWrap}>
-                  <Icon size={22} />
+                <div className={styles.catHeader}>
+                  <div className={styles.catIconWrap}>
+                    <Icon size={18} />
+                  </div>
+                  <div className={styles.catName}>{name}</div>
                 </div>
-                <div className={styles.catName}>{name}</div>
+                
+                {subcategories && subcategories.length > 0 && (
+                  <div className={styles.catSubList}>
+                    {subcategories.slice(0, 4).map((sub: string) => (
+                      <span
+                        key={sub}
+                        className={styles.catSubItem}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/jobs?category=${id}&subcategory=${encodeURIComponent(sub)}`);
+                        }}
+                      >
+                        <ChevronRight size={12} className={styles.catSubChevron} />
+                        {sub}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                
                 <div className={styles.catCount}>{count} jobs</div>
               </div>
             ))}
           </div>
+
+          {activeCategories.length > 8 && (
+            <div className={styles.moreCategoriesWrap}>
+              <button
+                className={styles.moreCategoriesBtn}
+                onClick={() => setShowAllCategories((prev) => !prev)}
+                aria-expanded={showAllCategories}
+              >
+                {showAllCategories ? 'Show Less' : 'Show More'}
+                <ChevronDown
+                  size={16}
+                  style={{
+                    transform: showAllCategories ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
       {/* ─── HOW IT WORKS ───────────────────────────────────────────────── */}
-      <section className={styles.howSection} aria-label="How it works">
+      <section id="how-it-works" className={styles.howSection} aria-label="How it works">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionChip}>
@@ -436,35 +588,84 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── FAQ SECTION ────────────────────────────────────────────────── */}
+      <section className={styles.faqSection} aria-label="Frequently Asked Questions">
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionChip}><MessageSquare size={12} /> FAQ</div>
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know about DIU MicroJobs platform.</p>
+          </div>
+
+          <div className={styles.faqGrid}>
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`${styles.faqCard} ${isOpen ? styles.faqCardOpen : ''}`}
+                  onClick={() => setOpenFaq(isOpen ? null : idx)}
+                >
+                  <div className={styles.faqQuestion}>
+                    <h4>{faq.q}</h4>
+                    <ChevronRight
+                      size={18}
+                      className={`${styles.faqChevron} ${isOpen ? styles.faqChevronOpen : ''}`}
+                    />
+                  </div>
+                  <div className={styles.faqAnswer}>
+                    <p>{faq.a}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ─── CTA ────────────────────────────────────────────────────────── */}
       <section className={styles.ctaSection} aria-label="Call to action">
+        <div className={styles.ctaBgImage} />
+        <div className={styles.ctaBgOverlay} />
         <div className={styles.container}>
-          <div className={styles.ctaInner}>
+          <div className={styles.ctaHeaderSection}>
             <h2>Ready to join DIU's freelance economy?</h2>
-            <p>
-              Whether you're posting a job or looking for work, get started in 
-              under 2 minutes with your official DIU email.
-            </p>
-            <div className={styles.ctaButtons}>
-              {!firebaseUser ? (
-                <>
-                  <Link href="/register" className={styles.ctaPrimary}>
-                    Create Free Account <ArrowRight size={16} />
-                  </Link>
-                  <Link href="/jobs" className={styles.ctaSecondary}>
-                    Browse Open Jobs
-                  </Link>
-                </>
-              ) : (
-                <Link href="/dashboard" className={styles.ctaPrimary}>
-                  Go to My Dashboard <ArrowRight size={16} />
-                </Link>
-              )}
+            <p>Select your path and get started in under 2 minutes with your official DIU email.</p>
+          </div>
+
+          <div className={styles.ctaSplitGrid}>
+            {/* Card 1: For Clients */}
+            <div className={styles.ctaSplitCard}>
+              <div className={styles.ctaCardBadge}>For Clients</div>
+              <h3>Hire verified student talent</h3>
+              <p>Post your project, receive proposals from skilled students, review portfolios, and pay securely in BDT.</p>
+              <div className={styles.ctaCardBenefits}>
+                <span className={styles.ctaBenefit}><ShieldCheck size={14} /> 100% DIU Email Verified</span>
+                <span className={styles.ctaBenefit}><ShieldCheck size={14} /> BDT Pricing & Secure deals</span>
+              </div>
+              <Link href={firebaseUser ? "/jobs/create" : "/register"} className={styles.ctaCardBtn}>
+                Post a MicroJob <ArrowRight size={16} />
+              </Link>
             </div>
-            <div className={styles.ctaNote}>
-              <ShieldCheck size={13} />
-              Requires an official @diu.edu.bd or @s.diu.edu.bd email address
+
+            {/* Card 2: For Freelancers */}
+            <div className={`${styles.ctaSplitCard} ${styles.ctaSplitCardFreelancer}`}>
+              <div className={styles.ctaCardBadge} style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa' }}>For Students</div>
+              <h3>Earn money doing campus tasks</h3>
+              <p>Create your portfolio, apply to open jobs, collaborate with clients, and grow your campus freelance reputation.</p>
+              <div className={styles.ctaCardBenefits}>
+                <span className={styles.ctaBenefit}><ShieldCheck size={14} style={{ color: '#60a5fa' }} /> Keep 100% of your earnings</span>
+                <span className={styles.ctaBenefit}><ShieldCheck size={14} style={{ color: '#60a5fa' }} /> Build your final-year portfolio</span>
+              </div>
+              <Link href={firebaseUser ? "/jobs" : "/register"} className={`${styles.ctaCardBtn} ${styles.ctaCardBtnSecondary}`}>
+                Find Freelance Work <ArrowRight size={16} />
+              </Link>
             </div>
+          </div>
+          
+          <div className={styles.ctaNote}>
+            <ShieldCheck size={13} />
+            Requires an official @diu.edu.bd or @s.diu.edu.bd email address
           </div>
         </div>
       </section>

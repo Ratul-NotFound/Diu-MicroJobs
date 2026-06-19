@@ -92,6 +92,10 @@ const jobSchema = new Schema<IJob>(
       type: [attachmentSchema],
       default: [],
     },
+    thumbnail: {
+      type: String,
+      default: "",
+    },
     proposalCount: {
       type: Number,
       default: 0,

@@ -40,8 +40,10 @@ interface JobDetail {
   client: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   category: any;
+  subcategory?: string;
   status: string;
   skills: string[];
+  thumbnail?: string;
 }
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -184,6 +186,11 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
         {/* Left Column: Job Details */}
         <div className={styles.detailsColumn}>
           <Card className={styles.jobCard}>
+            {job.thumbnail && (
+              <div className={styles.jobDetailThumbnailWrapper}>
+                <img src={job.thumbnail} alt={job.title} className={styles.jobDetailThumbnail} />
+              </div>
+            )}
             <div className={styles.jobHeader}>
               <div className={styles.headerTitleRow}>
                 <h2 className={styles.jobTitle}>{job.title}</h2>
@@ -192,7 +199,10 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
                 </Badge>
               </div>
               <div className={styles.metaRow}>
-                <span className={styles.categoryBadge}>{job.category?.name}</span>
+                <span className={styles.categoryBadge}>
+                  {job.category?.name}
+                  {job.subcategory && ` • ${job.subcategory}`}
+                </span>
                 <span className={styles.metaText}>Posted on {formatDate(job.deadline)}</span>
                 <span className={styles.jobStatus}>
                   <StatusBadge status={job.status} />

@@ -12,7 +12,57 @@ import styles from './CreateJobPage.module.css';
 interface CategoryItem {
   _id: string;
   name: string;
+  subcategories?: string[];
 }
+
+const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 400;
+        const MAX_HEIGHT = 300;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height);
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get 2d context'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => {
+        reject(err);
+      };
+    };
+    reader.onerror = (err) => {
+      reject(err);
+    };
+  });
+};
 
 export default function CreateJobPage() {
   const router = useRouter();
@@ -22,7 +72,11 @@ export default function CreateJobPage() {
 
   // Form states
   const [title, setTitle] = useState('');
+  const [thumbnail, setThumbnail] = useState('');
+  const [thumbnailName, setThumbnailName] = useState('');
+  const [compressing, setCompressing] = useState(false);
   const [category, setCategory] = useState('');
+  const [subcategory, setSubcategory] = useState('');
   const [budgetType, setBudgetType] = useState<'fixed' | 'range' | 'hourly'>('fixed');
   const [budgetMin, setBudgetMin] = useState('');
   const [budgetMax, setBudgetMax] = useState('');
@@ -49,6 +103,36 @@ export default function CreateJobPage() {
     loadCategories();
   }, []);
 
+  const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      addToast('Please select a valid image file', 'warning');
+      return;
+    }
+
+    setCompressing(true);
+    try {
+      const compressedBase64 = await compressImage(file);
+      setThumbnail(compressedBase64);
+      setThumbnailName(file.name);
+      addToast('Thumbnail optimized successfully!', 'success');
+    } catch (err) {
+      console.error('Image compression error:', err);
+      addToast('Failed to optimize image, using original', 'warning');
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setThumbnail(event.target?.result as string);
+        setThumbnailName(file.name);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setCompressing(false);
+    }
+  };
+
   const handleSubmit = async (submitStatus: 'draft' | 'pending_review') => {
     if (!title || !category || !budgetMin || !deadline || !description) {
       addToast('Please fill in all required fields', 'warning');
@@ -66,6 +150,7 @@ export default function CreateJobPage() {
         title,
         description,
         category,
+        subcategory: subcategory || undefined,
         budget: {
           type: budgetType,
           min: parseInt(budgetMin),
@@ -76,6 +161,7 @@ export default function CreateJobPage() {
         skills,
         urgency,
         status: submitStatus,
+        thumbnail: thumbnail || undefined,
       };
 
       const res = await apiClient<{ job: { _id: string } }>('/api/jobs', {
@@ -100,6 +186,16 @@ export default function CreateJobPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const activeCategoryDoc = categories.find((c) => c._id === category);
+  const subcategoryOptions = activeCategoryDoc && activeCategoryDoc.subcategories
+    ? activeCategoryDoc.subcategories.map((sub) => ({ value: sub, label: sub }))
+    : [];
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(e.target.value);
+    setSubcategory('');
   };
 
   const categoryOptions = categories.map((c) => ({
@@ -151,11 +247,23 @@ export default function CreateJobPage() {
                 label="Job Category"
                 options={categoryOptions}
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={handleCategoryChange}
                 placeholder={loading ? 'Loading categories...' : 'Select a Category'}
                 required
                 disabled={submitting || loading}
               />
+
+              {category && subcategoryOptions.length > 0 && (
+                <Select
+                  label="Job Subcategory"
+                  options={subcategoryOptions}
+                  value={subcategory}
+                  onChange={(e) => setSubcategory(e.target.value)}
+                  placeholder="Select a Subcategory"
+                  required
+                  disabled={submitting}
+                />
+              )}
 
               <Input
                 type="date"
@@ -165,6 +273,59 @@ export default function CreateJobPage() {
                 required
                 disabled={submitting}
               />
+            </div>
+          </div>
+
+          <div className={styles.formSection}>
+            <div className={styles.thumbnailHeader}>
+              <span className={styles.label}>Job Thumbnail (Optional)</span>
+              <span className={styles.helperText}>
+                Upload a cover image. It will be compressed automatically for fast loading.
+              </span>
+            </div>
+            
+            <div className={styles.uploadContainer}>
+              {thumbnail ? (
+                <div className={styles.previewWrapper}>
+                  <img src={thumbnail} alt="Job thumbnail preview" className={styles.previewImage} />
+                  <div className={styles.previewActions}>
+                    <span className={styles.imageName}>{thumbnailName || 'thumbnail.jpg'}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setThumbnail('');
+                        setThumbnailName('');
+                      }}
+                      disabled={submitting}
+                    >
+                      Remove Thumbnail
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <label className={styles.uploadArea}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailChange}
+                    className={styles.fileInput}
+                    disabled={submitting || compressing}
+                  />
+                  <div className={styles.uploadPlaceholder}>
+                    <div className={styles.uploadIcon}>
+                      {compressing ? '⚙️' : '📷'}
+                    </div>
+                    <span className={styles.uploadText}>
+                      {compressing ? 'Optimizing image...' : 'Click to upload job thumbnail'}
+                    </span>
+                    <span className={styles.uploadSubtext}>
+                      PNG, JPG (Auto-compressed to ~20KB for fast loads)
+                    </span>
+                  </div>
+                </label>
+              )}
             </div>
           </div>
 

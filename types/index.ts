@@ -139,6 +139,7 @@ export interface IJob extends Document {
   skills: string[];
   urgency: UrgencyLevel;
   attachments: IAttachment[];
+  thumbnail?: string;
   proposalCount: number;
   assignedTo: Types.ObjectId | null;
   rejectionReason?: string;

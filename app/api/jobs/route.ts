@@ -3,6 +3,8 @@ import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import Job from '@/models/Job';
 import User from '@/models/User';
+import Category from '@/models/Category';
+import mongoose from 'mongoose';
 
 /**
  * GET /api/jobs
@@ -16,6 +18,7 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const category = searchParams.get('category');
+    const subcategory = searchParams.get('subcategory');
     const status = searchParams.get('status') || 'open';
     const search = searchParams.get('search');
     const urgency = searchParams.get('urgency');
@@ -30,13 +33,27 @@ export async function GET(request: Request) {
     const query: Record<string, any> = {};
 
     if (status) query.status = status;
-    if (category) query.category = category;
+    if (subcategory) query.subcategory = subcategory;
+    if (category) {
+      if (mongoose.Types.ObjectId.isValid(category)) {
+        query.category = category;
+      } else {
+        const catDoc = await Category.findOne({ slug: category });
+        if (catDoc) {
+          query.category = catDoc._id;
+        } else {
+          query.category = new mongoose.Types.ObjectId();
+        }
+      }
+    }
     if (urgency) query.urgency = urgency;
 
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } },
+        { subcategory: { $regex: search, $options: 'i' } },
+        { skills: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -102,7 +119,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, description, category, subcategory, budget, deadline, skills, urgency, attachments, status } = body;
+    const { title, description, category, subcategory, budget, deadline, skills, urgency, attachments, status, thumbnail } = body;
 
     // Validate required fields
     if (!title || !description || !category || !budget || !deadline) {
@@ -121,6 +138,7 @@ export async function POST(request: Request) {
       skills: skills || [],
       urgency: urgency || 'normal',
       attachments: attachments || [],
+      thumbnail: thumbnail || '',
     });
 
     const populated = await Job.findById(job._id)
