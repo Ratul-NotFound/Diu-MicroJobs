@@ -44,11 +44,29 @@ function BrowseJobsContent() {
   const [loading, setLoading] = useState(true);
 
   // Filters
+  const [searchVal, setSearchVal] = useState('');
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [urgency, setUrgency] = useState('');
+  const [minBudgetVal, setMinBudgetVal] = useState('');
   const [minBudget, setMinBudget] = useState('');
+
+  // Debounce searchVal -> search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchVal);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchVal]);
+
+  // Debounce minBudgetVal -> minBudget
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinBudget(minBudgetVal);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [minBudgetVal]);
 
   const loadJobs = useCallback(async () => {
     try {
@@ -103,6 +121,7 @@ function BrowseJobsContent() {
   useEffect(() => {
     const urlSearch = searchParams.get('search');
     if (urlSearch) {
+      setSearchVal(urlSearch);
       setSearch(urlSearch);
     }
   }, [searchParams]);
@@ -153,8 +172,8 @@ function BrowseJobsContent() {
       <Card className={styles.toolbar}>
         <div className={styles.toolbarRow}>
           <SearchBar
-            value={search}
-            onChange={setSearch}
+            value={searchVal}
+            onChange={setSearchVal}
             placeholder="Search by title, skills or keywords..."
             className={styles.searchBar}
           />
@@ -185,8 +204,8 @@ function BrowseJobsContent() {
             <Input
               type="number"
               placeholder="Min Budget (৳)"
-              value={minBudget}
-              onChange={(e) => setMinBudget(e.target.value)}
+              value={minBudgetVal}
+              onChange={(e) => setMinBudgetVal(e.target.value)}
               className={styles.budgetInput}
             />
           </div>
@@ -208,10 +227,12 @@ function BrowseJobsContent() {
           action={{
             label: 'Clear Filters',
             onClick: () => {
+              setSearchVal('');
               setSearch('');
               setCategory('');
               setSubcategory('');
               setUrgency('');
+              setMinBudgetVal('');
               setMinBudget('');
             },
           }}

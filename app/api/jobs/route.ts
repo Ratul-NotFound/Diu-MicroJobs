@@ -78,6 +78,7 @@ export async function GET(request: Request) {
       Job.find(query)
         .populate('client', 'displayName photoURL rating completedJobs')
         .populate('category', 'name slug icon')
+        .select('-attachments')
         .sort(sort)
         .skip(skip)
         .limit(limit)
