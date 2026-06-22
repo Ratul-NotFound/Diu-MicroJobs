@@ -20,7 +20,7 @@ export async function GET(
     }
 
     const contract = await Contract.findById(contractId)
-      .populate('job')
+      .populate('job', '-attachments -thumbnail')
       .populate('client', 'displayName photoURL rating email department studentId role')
       .populate('freelancer', 'displayName photoURL rating email department studentId role')
       .lean();
@@ -54,7 +54,7 @@ export async function PATCH(
     await connectDB();
     const { id: contractId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

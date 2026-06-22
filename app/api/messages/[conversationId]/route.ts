@@ -35,6 +35,9 @@ export async function GET(
     const limit = parseInt(searchParams.get('limit') || '50');
     const skip = (page - 1) * limit;
 
+    // Reset unread counts for this user in the conversation
+    const unreadKey = `unreadCount.${user._id.toString()}`;
+
     const [messages, total] = await Promise.all([
       Message.find({ conversation: conversationId })
         .populate('sender', 'displayName photoURL')
@@ -43,16 +46,13 @@ export async function GET(
         .limit(limit)
         .lean(),
       Message.countDocuments({ conversation: conversationId }),
+      Conversation.findByIdAndUpdate(conversationId, {
+        $set: { [unreadKey]: 0 },
+      }),
     ]);
 
     // Reverse messages to show chronological order
     const chronologicalMessages = messages.reverse();
-
-    // Reset unread counts for this user in the conversation
-    const unreadKey = `unreadCount.${user._id.toString()}`;
-    await Conversation.findByIdAndUpdate(conversationId, {
-      $set: { [unreadKey]: 0 },
-    });
 
     return NextResponse.json({
       messages: chronologicalMessages,
@@ -79,7 +79,7 @@ export async function POST(
     await connectDB();
     const { conversationId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id displayName photoURL').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -128,9 +128,15 @@ export async function POST(
 
     await Conversation.findByIdAndUpdate(conversationId, { $set: update });
 
-    const populatedMessage = await Message.findById(message._id)
-      .populate('sender', 'displayName photoURL')
-      .lean();
+    // Construct populated message in-memory to save a DB read query
+    const populatedMessage = {
+      ...message.toObject(),
+      sender: {
+        _id: user._id,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      }
+    };
 
     return NextResponse.json({ message: populatedMessage }, { status: 201 });
   } catch (error) {

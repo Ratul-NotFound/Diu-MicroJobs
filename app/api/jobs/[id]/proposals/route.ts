@@ -15,12 +15,15 @@ export async function GET(
     await connectDB();
     const { id: jobId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const [user, job] = await Promise.all([
+      User.findOne({ firebaseUid: decoded.uid }).select('_id').lean(),
+      Job.findById(jobId).select('client').lean(),
+    ]);
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const job = await Job.findById(jobId);
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
@@ -34,7 +37,8 @@ export async function GET(
 
     const proposals = await Proposal.find(query)
       .populate('freelancer', 'displayName photoURL rating completedJobs department role bio skills')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     return NextResponse.json({ proposals });
   } catch (error) {
@@ -53,7 +57,11 @@ export async function POST(
     await connectDB();
     const { id: jobId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const [user, job] = await Promise.all([
+      User.findOne({ firebaseUid: decoded.uid }).select('_id status displayName photoURL rating').lean(),
+      Job.findById(jobId).select('client status').lean(),
+    ]);
+
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -62,7 +70,6 @@ export async function POST(
       return NextResponse.json({ error: 'Your account is not active' }, { status: 403 });
     }
 
-    const job = await Job.findById(jobId);
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
@@ -76,7 +83,7 @@ export async function POST(
     }
 
     // Check if already applied
-    const existing = await Proposal.findOne({ job: jobId, freelancer: user._id });
+    const existing = await Proposal.findOne({ job: jobId, freelancer: user._id }).select('_id').lean();
     if (existing) {
       return NextResponse.json({ error: 'You have already submitted a proposal for this job' }, { status: 400 });
     }
@@ -101,9 +108,16 @@ export async function POST(
     // Increment proposal count
     await Job.findByIdAndUpdate(jobId, { $inc: { proposalCount: 1 } });
 
-    // Populate freelancer details
-    const populated = await Proposal.findById(proposal._id)
-      .populate('freelancer', 'displayName photoURL rating');
+    // Construct populated proposal in-memory without a separate read query
+    const populated = {
+      ...proposal.toObject(),
+      freelancer: {
+        _id: user._id,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        rating: user.rating,
+      }
+    };
 
     return NextResponse.json({ proposal: populated }, { status: 201 });
   } catch (error) {

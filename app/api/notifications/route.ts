@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

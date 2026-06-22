@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -56,7 +56,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Job ID, proposal ID, agreed amount, and deadline are required' }, { status: 400 });
     }
 
-    const job = await Job.findById(jobId).lean();
+    const [job, proposal] = await Promise.all([
+      Job.findById(jobId).lean(),
+      Proposal.findById(proposalId).lean()
+    ]);
+
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
@@ -65,7 +69,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Only the job owner can create a contract' }, { status: 403 });
     }
 
-    const proposal = await Proposal.findById(proposalId).lean();
     if (!proposal) {
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }

@@ -115,6 +115,7 @@ jobSchema.index({ status: 1, category: 1 });
 jobSchema.index({ client: 1 });
 jobSchema.index({ createdAt: -1 });
 jobSchema.index({ skills: 1 });
+jobSchema.index({ title: 'text', description: 'text', subcategory: 'text', skills: 'text' });
 
 const Job =
   (mongoose.models.Job as mongoose.Model<IJob>) ||

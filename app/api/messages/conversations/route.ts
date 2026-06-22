@@ -3,6 +3,7 @@ import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import Conversation from '@/models/Conversation';
 import User from '@/models/User';
+import Job from '@/models/Job';
 import { sanitizeData } from '@/lib/security';
 
 export async function GET(request: Request) {
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -37,11 +38,6 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const currentUser = await User.findOne({ firebaseUid: decoded.uid }).lean();
-    if (!currentUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
     const body = sanitizeData(await request.json());
     const { participantId, jobId } = body;
 
@@ -49,10 +45,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Participant ID is required' }, { status: 400 });
     }
 
-    // Check if target user exists
-    const targetUser = await User.findById(participantId).lean();
+    // Parallel lookup and validations
+    const [currentUser, targetUser, job] = await Promise.all([
+      User.findOne({ firebaseUid: decoded.uid }).select('_id displayName photoURL role isOnline lastSeen').lean(),
+      User.findById(participantId).select('_id displayName photoURL role isOnline lastSeen').lean(),
+      jobId ? Job.findById(jobId).select('title budget status').lean() : Promise.resolve(null),
+    ]);
+
+    if (!currentUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     if (!targetUser) {
       return NextResponse.json({ error: 'Target user not found' }, { status: 404 });
+    }
+
+    if (jobId && !job) {
+      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
 
     // Look for existing conversation between these exact participants
@@ -66,14 +75,14 @@ export async function POST(request: Request) {
       query.job = jobId;
     }
 
-    let conversation = await Conversation.findOne(query)
+    let conversation: unknown = await Conversation.findOne(query)
       .populate('participants', 'displayName photoURL role isOnline lastSeen')
       .populate('job', 'title budget status')
       .lean();
 
     if (!conversation) {
       // Create new conversation
-      conversation = await Conversation.create({
+      const newConv = await Conversation.create({
         participants: [currentUser._id, targetUser._id],
         job: jobId || null,
         lastMessage: '',
@@ -81,10 +90,12 @@ export async function POST(request: Request) {
         unreadCount: {},
       });
 
-      conversation = await Conversation.findById(conversation._id)
-        .populate('participants', 'displayName photoURL role isOnline lastSeen')
-        .populate('job', 'title budget status')
-        .lean();
+      // Construct populated conversation in-memory to save a DB read query
+      conversation = {
+        ...newConv.toObject(),
+        participants: [currentUser, targetUser],
+        job: job || null,
+      };
     }
 
     return NextResponse.json({ conversation });

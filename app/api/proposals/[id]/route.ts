@@ -15,12 +15,12 @@ export async function PATCH(
     await connectDB();
     const { id: proposalId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const proposal = await Proposal.findById(proposalId).populate('job');
+    const proposal = await Proposal.findById(proposalId).populate('job', 'client status');
     if (!proposal) {
       return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     }

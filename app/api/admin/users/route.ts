@@ -5,7 +5,7 @@ import User from '@/models/User';
 
 export async function GET(request: Request) {
   try {
-    const { admin } = await verifyAdmin(request);
+    await verifyAdmin(request);
     await connectDB();
 
     const { searchParams } = new URL(request.url);
@@ -33,6 +33,7 @@ export async function GET(request: Request) {
 
     const [users, total] = await Promise.all([
       User.find(query)
+        .select('-portfolio -skills -bio')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -58,7 +59,7 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { admin } = await verifyAdmin(request, 'moderator');
+    await verifyAdmin(request, 'moderator');
     await connectDB();
 
     const body = await request.json();
@@ -68,7 +69,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'User ID and action are required' }, { status: 400 });
     }
 
-    const targetUser = await User.findById(userId);
+    const targetUser = await User.findById(userId).select('_id').lean();
     if (!targetUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -90,7 +91,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true }).lean();
 
     return NextResponse.json({ user: updatedUser, adminAction: action });
   } catch (error) {
