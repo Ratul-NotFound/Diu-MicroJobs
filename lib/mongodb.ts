@@ -35,6 +35,8 @@ export async function connectDB(): Promise<typeof mongoose> {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // Timeout connection after 5 seconds to prevent serverless function hangs
+      connectTimeoutMS: 5000,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongooseInstance) => {

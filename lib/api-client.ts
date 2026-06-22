@@ -50,32 +50,43 @@ export async function apiClient<T = unknown>(
       requestHeaders['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      method,
-      headers: requestHeaders,
-      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const responseData = await response.json();
+    try {
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method,
+        headers: requestHeaders,
+        body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
-    if (!response.ok) {
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        return {
+          data: null,
+          error: responseData.error || responseData.message || `Request failed with status ${response.status}`,
+          status: response.status,
+        };
+      }
+
       return {
-        data: null,
-        error: responseData.error || responseData.message || `Request failed with status ${response.status}`,
+        data: responseData as T,
+        error: null,
         status: response.status,
       };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
     }
-
-    return {
-      data: responseData as T,
-      error: null,
-      status: response.status,
-    };
   } catch (err) {
+    const isTimeout = err instanceof Error && err.name === 'AbortError';
     return {
       data: null,
-      error: err instanceof Error ? err.message : 'An unexpected error occurred',
-      status: 0,
+      error: isTimeout ? 'Request timed out' : err instanceof Error ? err.message : 'An unexpected error occurred',
+      status: isTimeout ? 408 : 0,
     };
   }
 }
