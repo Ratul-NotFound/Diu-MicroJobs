@@ -426,3 +426,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .uploadRow {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}

@@ -1071,6 +1071,13 @@
   line-height: var(--leading-relaxed);
 }
 
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+  margin-top: var(--space-12);
+}
+
 .moreCategoriesWrap {
   display: flex;
   justify-content: center;
@@ -1388,6 +1395,7 @@
   .heroInner { gap: var(--space-10); }
   .howGrid { grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
   .howConnector { display: none; }
+  .featuresGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 900px) {
@@ -1409,6 +1417,10 @@
   .testimonialGrid { grid-template-columns: 1fr; }
   .ctaHeaderSection h2 { font-size: var(--text-3xl); }
   .ctaSplitGrid { grid-template-columns: 1fr; gap: var(--space-6); }
+}
+
+@media (max-width: 640px) {
+  .featuresGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

@@ -251,3 +251,13 @@
     grid-column: span 2;
   }
 }
+
+@media (max-width: 480px) {
+  .selectsWrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .budgetInput {
+    grid-column: span 1;
+  }
+}

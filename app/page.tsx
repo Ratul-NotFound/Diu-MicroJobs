@@ -541,7 +541,7 @@ export default function Home() {
             <p>No external platforms, no middlemen — just trusted peers doing great work.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-6)', marginTop: 'var(--space-12)' }}>
+          <div className={styles.featuresGrid}>
             {FEATURES.map(({ icon: Icon, title, desc }) => (
               <div key={title} className={styles.featureCard}>
                 <div className={styles.featureCardIcon}>
