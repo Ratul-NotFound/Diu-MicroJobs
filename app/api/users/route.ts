@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 export async function PATCH(request: Request) {
   try {
@@ -13,7 +14,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { displayName, bio, skills, portfolio, department, photoURL } = body;
 
     const updates: Record<string, unknown> = {};

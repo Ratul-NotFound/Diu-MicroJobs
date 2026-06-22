@@ -5,6 +5,7 @@ import Job from '@/models/Job';
 import User from '@/models/User';
 import Category from '@/models/Category';
 import mongoose from 'mongoose';
+import { sanitizeData } from '@/lib/security';
 
 /**
  * GET /api/jobs
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Your account is not active' }, { status: 403 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { title, description, category, subcategory, budget, deadline, skills, urgency, attachments, status, thumbnail } = body;
 
     // Validate required fields

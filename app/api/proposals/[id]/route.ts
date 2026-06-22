@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import Proposal from '@/models/Proposal';
 import Job from '@/models/Job';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 export async function PATCH(
   request: Request,
@@ -33,7 +34,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Not authorized to modify this proposal' }, { status: 403 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { status, clientResponse } = body;
 
     if (!status) {

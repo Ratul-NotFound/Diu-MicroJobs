@@ -5,6 +5,7 @@ import Review from '@/models/Review';
 import Contract from '@/models/Contract';
 import User from '@/models/User';
 import mongoose from 'mongoose';
+import { sanitizeData } from '@/lib/security';
 
 export async function GET(request: Request) {
   try {
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { jobId, contractId, revieweeId, rating, communication, quality, timeliness, comment } = body;
 
     if (!jobId || !contractId || !revieweeId || !rating) {

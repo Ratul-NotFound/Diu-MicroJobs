@@ -3,6 +3,7 @@ import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import Conversation from '@/models/Conversation';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 export async function GET(request: Request) {
   try {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { participantId, jobId } = body;
 
     if (!participantId) {

@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import Proposal from '@/models/Proposal';
 import Job from '@/models/Job';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 export async function GET(
   request: Request,
@@ -80,7 +81,7 @@ export async function POST(
       return NextResponse.json({ error: 'You have already submitted a proposal for this job' }, { status: 400 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { coverLetter, bidAmount, estimatedDuration, attachments } = body;
 
     if (!coverLetter || bidAmount === undefined) {

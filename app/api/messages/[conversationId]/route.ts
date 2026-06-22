@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import Message from '@/models/Message';
 import Conversation from '@/models/Conversation';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 export async function GET(
   request: Request,
@@ -93,7 +94,7 @@ export async function POST(
       return NextResponse.json({ error: 'Conversation not found or access denied' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
     const { text, attachments } = body;
 
     if (!text && (!attachments || attachments.length === 0)) {

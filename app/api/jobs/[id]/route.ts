@@ -3,6 +3,7 @@ import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import Job from '@/models/Job';
 import User from '@/models/User';
+import { sanitizeData } from '@/lib/security';
 
 /**
  * GET /api/jobs/[id]
@@ -61,7 +62,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Not authorized to update this job' }, { status: 403 });
     }
 
-    const body = await request.json();
+    const body = sanitizeData(await request.json());
 
     // Validate status updates
     if (body.status !== undefined) {
