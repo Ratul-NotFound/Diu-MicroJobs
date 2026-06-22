@@ -14,7 +14,7 @@ export async function GET(
     await connectDB();
     const { id: contractId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -22,7 +22,8 @@ export async function GET(
     const contract = await Contract.findById(contractId)
       .populate('job')
       .populate('client', 'displayName photoURL rating email department studentId role')
-      .populate('freelancer', 'displayName photoURL rating email department studentId role');
+      .populate('freelancer', 'displayName photoURL rating email department studentId role')
+      .lean();
 
     if (!contract) {
       return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
@@ -53,7 +54,7 @@ export async function PATCH(
     await connectDB();
     const { id: contractId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

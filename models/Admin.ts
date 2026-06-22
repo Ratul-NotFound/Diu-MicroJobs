@@ -39,6 +39,8 @@ const adminSchema = new Schema<IAdmin>(
   { timestamps: true }
 );
 
+adminSchema.index({ firebaseUid: 1 }, { unique: true });
+
 const Admin =
   (mongoose.models.Admin as mongoose.Model<IAdmin>) ||
   mongoose.model<IAdmin>("Admin", adminSchema);

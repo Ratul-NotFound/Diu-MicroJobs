@@ -19,7 +19,8 @@ export async function GET(
     const job = await Job.findById(id)
       .populate('client', 'displayName photoURL rating completedJobs department role bio')
       .populate('category', 'name slug icon')
-      .populate('assignedTo', 'displayName photoURL rating');
+      .populate('assignedTo', 'displayName photoURL rating')
+      .lean();
 
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
@@ -45,12 +46,12 @@ export async function PATCH(
     await connectDB();
     const { id } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const job = await Job.findById(id);
+    const job = await Job.findById(id).lean();
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
@@ -90,7 +91,8 @@ export async function PATCH(
 
     const updatedJob = await Job.findByIdAndUpdate(id, updates, { new: true })
       .populate('client', 'displayName photoURL rating')
-      .populate('category', 'name slug icon');
+      .populate('category', 'name slug icon')
+      .lean();
 
     return NextResponse.json({ job: updatedJob });
   } catch (error) {
@@ -118,12 +120,12 @@ export async function DELETE(
     await connectDB();
     const { id } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const job = await Job.findById(id);
+    const job = await Job.findById(id).lean();
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }

@@ -21,7 +21,9 @@ export async function GET(request: Request) {
     const reviews = await Review.find(query)
       .populate('reviewer', 'displayName photoURL role')
       .populate('reviewee', 'displayName photoURL role')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
 
     return NextResponse.json({ reviews });
   } catch (error) {
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const currentUser = await User.findOne({ firebaseUid: decoded.uid });
+    const currentUser = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!currentUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -49,7 +51,7 @@ export async function POST(request: Request) {
     }
 
     // Check if contract exists and is completed
-    const contract = await Contract.findById(contractId);
+    const contract = await Contract.findById(contractId).lean();
     if (!contract) {
       return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
     }
@@ -82,7 +84,7 @@ export async function POST(request: Request) {
     const existing = await Review.findOne({
       contract: contractId,
       reviewer: currentUser._id,
-    });
+    }).lean();
     if (existing) {
       return NextResponse.json({ error: 'You have already reviewed this contract' }, { status: 400 });
     }

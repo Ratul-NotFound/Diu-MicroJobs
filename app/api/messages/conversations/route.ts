@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -20,7 +20,8 @@ export async function GET(request: Request) {
     })
       .populate('participants', 'displayName photoURL role isOnline lastSeen')
       .populate('job', 'title budget status')
-      .sort({ lastMessageAt: -1 });
+      .sort({ lastMessageAt: -1 })
+      .lean();
 
     return NextResponse.json({ conversations });
   } catch (error) {
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const currentUser = await User.findOne({ firebaseUid: decoded.uid });
+    const currentUser = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!currentUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     // Check if target user exists
-    const targetUser = await User.findById(participantId);
+    const targetUser = await User.findById(participantId).lean();
     if (!targetUser) {
       return NextResponse.json({ error: 'Target user not found' }, { status: 404 });
     }
@@ -66,7 +67,8 @@ export async function POST(request: Request) {
 
     let conversation = await Conversation.findOne(query)
       .populate('participants', 'displayName photoURL role isOnline lastSeen')
-      .populate('job', 'title budget status');
+      .populate('job', 'title budget status')
+      .lean();
 
     if (!conversation) {
       // Create new conversation
@@ -80,7 +82,8 @@ export async function POST(request: Request) {
 
       conversation = await Conversation.findById(conversation._id)
         .populate('participants', 'displayName photoURL role isOnline lastSeen')
-        .populate('job', 'title budget status');
+        .populate('job', 'title budget status')
+        .lean();
     }
 
     return NextResponse.json({ conversation });

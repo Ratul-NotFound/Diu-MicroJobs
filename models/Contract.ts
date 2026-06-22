@@ -76,6 +76,10 @@ const contractSchema = new Schema<IContract>(
   { timestamps: true }
 );
 
+contractSchema.index({ client: 1, createdAt: -1 });
+contractSchema.index({ freelancer: 1, createdAt: -1 });
+contractSchema.index({ job: 1 });
+
 const Contract =
   (mongoose.models.Contract as mongoose.Model<IContract>) ||
   mongoose.model<IContract>("Contract", contractSchema);

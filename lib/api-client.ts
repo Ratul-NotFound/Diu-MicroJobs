@@ -51,7 +51,7 @@ export async function apiClient<T = unknown>(
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {

@@ -26,22 +26,22 @@ export default function DashboardPage() {
     async function loadDashboardData() {
       try {
         setLoading(true);
-        // Load recent jobs
-        const jobsRes = await apiClient<{ jobs: [] }>('/api/jobs?limit=3');
+        // Load all data in parallel
+        const [jobsRes, contractsRes, proposalsRes] = await Promise.all([
+          apiClient<{ jobs: [] }>('/api/jobs?limit=3'),
+          apiClient<{ contracts: [] }>('/api/contracts'),
+          apiClient<{ proposals: [] }>('/api/proposals'),
+        ]);
+
         if (jobsRes.data) {
           setRecentJobs(jobsRes.data.jobs);
         }
 
-        // Load contracts
-        const contractsRes = await apiClient<{ contracts: [] }>('/api/contracts');
         if (contractsRes.data) {
           const allContracts = contractsRes.data.contracts;
           setRecentContracts(allContracts.slice(0, 3));
           
-          // Load proposals
-          const proposalsRes = await apiClient<{ proposals: [] }>('/api/proposals');
           const proposalsCount = proposalsRes.data?.proposals.length || 0;
-
           const activeContracts = allContracts.filter((c: { status: string }) => c.status === 'active').length;
           const completedJobs = userProfile?.completedJobs || 0;
 

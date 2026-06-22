@@ -54,6 +54,7 @@ const reviewSchema = new Schema<IReview>(
 
 reviewSchema.index({ reviewee: 1 });
 reviewSchema.index({ job: 1 });
+reviewSchema.index({ contract: 1, reviewer: 1 });
 
 const Review =
   (mongoose.models.Review as mongoose.Model<IReview>) ||

@@ -8,7 +8,7 @@ export async function PATCH(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -24,7 +24,7 @@ export async function PATCH(request: Request) {
     if (department !== undefined) updates.department = department;
     if (photoURL !== undefined) updates.photoURL = photoURL;
 
-    const updatedUser = await User.findByIdAndUpdate(user._id, updates, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(user._id, updates, { new: true }).lean();
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {

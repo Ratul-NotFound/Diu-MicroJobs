@@ -276,9 +276,7 @@ export default function Home() {
     ? testimonials
     : TESTIMONIALS;
 
-  if (!isMounted) {
-    return null;
-  }
+
 
   return (
     <div className={styles.wrapper}>

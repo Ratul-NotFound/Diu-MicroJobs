@@ -17,13 +17,16 @@ export async function GET(request: Request) {
     }
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const [user, admin] = await Promise.all([
+      User.findOne({ firebaseUid: decoded.uid }).lean(),
+      Admin.findOne({ firebaseUid: decoded.uid, status: 'active' })
+        .select('firebaseUid email displayName role permissions status')
+        .lean(),
+    ]);
+
     if (!user) {
       return NextResponse.json({ user: null, admin: null });
     }
-
-    // Check if user is also an admin
-    const admin = await Admin.findOne({ firebaseUid: decoded.uid, status: 'active' });
 
     return NextResponse.json({
       user,

@@ -38,7 +38,7 @@ export async function GET(request: Request) {
       if (mongoose.Types.ObjectId.isValid(category)) {
         query.category = category;
       } else {
-        const catDoc = await Category.findOne({ slug: category });
+        const catDoc = await Category.findOne({ slug: category }).lean();
         if (catDoc) {
           query.category = catDoc._id;
         } else {
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -143,7 +143,8 @@ export async function POST(request: Request) {
 
     const populated = await Job.findById(job._id)
       .populate('client', 'displayName photoURL rating')
-      .populate('category', 'name slug icon');
+      .populate('category', 'name slug icon')
+      .lean();
 
     return NextResponse.json({ job: populated }, { status: 201 });
   } catch (error) {

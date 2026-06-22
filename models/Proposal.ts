@@ -46,6 +46,8 @@ const proposalSchema = new Schema<IProposal>(
 );
 
 proposalSchema.index({ job: 1, freelancer: 1 }, { unique: true });
+proposalSchema.index({ freelancer: 1, createdAt: -1 });
+proposalSchema.index({ job: 1, status: 1 });
 
 const Proposal =
   (mongoose.models.Proposal as mongoose.Model<IProposal>) ||

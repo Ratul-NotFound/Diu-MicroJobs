@@ -14,7 +14,7 @@ export async function GET(
     await connectDB();
     const { conversationId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -23,7 +23,7 @@ export async function GET(
     const conversation = await Conversation.findOne({
       _id: conversationId,
       participants: user._id,
-    });
+    }).lean();
 
     if (!conversation) {
       return NextResponse.json({ error: 'Conversation not found or access denied' }, { status: 404 });
@@ -78,7 +78,7 @@ export async function POST(
     await connectDB();
     const { conversationId } = await params;
 
-    const user = await User.findOne({ firebaseUid: decoded.uid });
+    const user = await User.findOne({ firebaseUid: decoded.uid }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -128,7 +128,8 @@ export async function POST(
     await Conversation.findByIdAndUpdate(conversationId, { $set: update });
 
     const populatedMessage = await Message.findById(message._id)
-      .populate('sender', 'displayName photoURL');
+      .populate('sender', 'displayName photoURL')
+      .lean();
 
     return NextResponse.json({ message: populatedMessage }, { status: 201 });
   } catch (error) {

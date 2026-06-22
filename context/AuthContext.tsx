@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from 'react';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -131,13 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile]);
 
   /** Email + password login — does NOT navigate; lets the page redirect */
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
     // onAuthStateChanged will fire and call fetchProfile automatically
-  };
+  }, []);
 
   /** Google sign-in */
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const email = result.user.email;
@@ -145,10 +145,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await firebaseSignOut(auth);
       throw new Error('Access restricted: Please log in using your official DIU Google Account (@diu.edu.bd, @daffodilvarsity.edu.bd, or @s.diu.edu.bd)');
     }
-  };
+  }, []);
 
   /** Register new user — creates Firebase account then MongoDB document */
-  const register = async (email: string, password: string, profileData: RegisterData) => {
+  const register = useCallback(async (email: string, password: string, profileData: RegisterData) => {
     let user = auth.currentUser;
 
     if (!user) {
@@ -179,45 +179,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Re-fetch to populate userProfile state
     await fetchProfile();
-  };
+  }, [fetchProfile]);
 
   /** Sign out */
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await firebaseSignOut(auth);
     setUserProfile(null);
     setAdminProfile(null);
     setProfileChecked(false);
-  };
+  }, []);
 
   /** Password reset */
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     await sendPasswordResetEmail(auth, email);
-  };
+  }, []);
 
   /** Refresh profile from DB */
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (firebaseUser) {
       await fetchProfile();
     }
-  };
+  }, [firebaseUser, fetchProfile]);
+
+  const value = useMemo(() => ({
+    firebaseUser,
+    userProfile,
+    adminProfile,
+    loading,
+    profileChecked,
+    isAdmin,
+    login,
+    loginWithGoogle,
+    register,
+    logout,
+    resetPassword,
+    refreshProfile,
+  }), [
+    firebaseUser,
+    userProfile,
+    adminProfile,
+    loading,
+    profileChecked,
+    isAdmin,
+    login,
+    loginWithGoogle,
+    register,
+    logout,
+    resetPassword,
+    refreshProfile,
+  ]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        firebaseUser,
-        userProfile,
-        adminProfile,
-        loading,
-        profileChecked,
-        isAdmin,
-        login,
-        loginWithGoogle,
-        register,
-        logout,
-        resetPassword,
-        refreshProfile,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
