@@ -14,7 +14,6 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { apiClient } from '@/lib/api-client';
-import { isDiuEmail } from '@/lib/utils';
 
 /** User profile from MongoDB */
 interface UserProfile {
@@ -33,6 +32,13 @@ interface UserProfile {
   completedJobs: number;
   isVerified: boolean;
   status: 'active' | 'suspended' | 'banned';
+  university?: {
+    _id: string;
+    name: string;
+    shortName: string;
+    slug: string;
+    departments: string[];
+  };
   portfolio?: Array<{
     title: string;
     imageUrl: string;
@@ -141,9 +147,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const email = result.user.email;
-    if (email && !isDiuEmail(email)) {
-      await firebaseSignOut(auth);
-      throw new Error('Access restricted: Please log in using your official DIU Google Account (@diu.edu.bd, @daffodilvarsity.edu.bd, or @s.diu.edu.bd)');
+    if (email) {
+      const { data } = await apiClient<{ valid: boolean; error?: string }>('/api/auth/validate-email', {
+        method: 'POST',
+        body: { email },
+      });
+      if (!data?.valid) {
+        await firebaseSignOut(auth);
+        throw new Error(data?.error || 'Your university is not registered on this platform');
+      }
     }
   }, []);
 

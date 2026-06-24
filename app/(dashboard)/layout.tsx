@@ -78,7 +78,7 @@ export default function AppDashboardLayout({ children }: { children: React.React
             Account {userProfile.status === 'banned' ? 'Banned' : 'Suspended'}
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)' }}>
-            Your access to DIU MicroJobs has been disabled by the administrators.
+            Your access to MicroJobs has been disabled by the administrators.
           </p>
           {userProfile.status === 'suspended' && (
             <div style={{

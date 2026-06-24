@@ -60,6 +60,12 @@ const jobSchema = new Schema<IJob>(
       ref: "User",
       required: true,
     },
+    university: {
+      type: Schema.Types.ObjectId,
+      ref: 'University',
+      required: true,
+      index: true,
+    },
     status: {
       type: String,
       enum: [
@@ -111,7 +117,7 @@ const jobSchema = new Schema<IJob>(
   { timestamps: true }
 );
 
-jobSchema.index({ status: 1, category: 1 });
+jobSchema.index({ university: 1, status: 1, category: 1 });
 jobSchema.index({ client: 1 });
 jobSchema.index({ createdAt: -1 });
 jobSchema.index({ skills: 1 });

@@ -88,11 +88,25 @@ export interface IMilestone {
   status?: MilestoneStatus;
 }
 
+export interface IUniversity extends Document {
+  name: string;
+  shortName: string;
+  slug: string;
+  domains: string[];
+  logo: string;
+  departments: string[];
+  currency: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // ─── Document Interfaces ────────────────────────────────────────────
 
 export interface IUser extends Document {
   firebaseUid: string;
   email: string;
+  university: Types.ObjectId;
   displayName: string;
   photoURL: string | null;
   role: UserRole;
@@ -135,6 +149,7 @@ export interface IJob extends Document {
   budget: IBudget;
   deadline: Date;
   client: Types.ObjectId;
+  university: Types.ObjectId;
   status: JobStatus;
   skills: string[];
   urgency: UrgencyLevel;

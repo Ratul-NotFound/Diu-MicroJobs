@@ -47,9 +47,9 @@ export async function POST(request: Request) {
 
     // Parallel lookup and validations
     const [currentUser, targetUser, job] = await Promise.all([
-      User.findOne({ firebaseUid: decoded.uid }).select('_id displayName photoURL role isOnline lastSeen').lean(),
-      User.findById(participantId).select('_id displayName photoURL role isOnline lastSeen').lean(),
-      jobId ? Job.findById(jobId).select('title budget status').lean() : Promise.resolve(null),
+      User.findOne({ firebaseUid: decoded.uid }).select('_id displayName photoURL role isOnline lastSeen university').lean(),
+      User.findById(participantId).select('_id displayName photoURL role isOnline lastSeen university').lean(),
+      jobId ? Job.findById(jobId).select('title budget status university').lean() : Promise.resolve(null),
     ]);
 
     if (!currentUser) {
@@ -62,6 +62,15 @@ export async function POST(request: Request) {
 
     if (jobId && !job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+    }
+
+    // Ensure they belong to the same university
+    if (currentUser.university?.toString() !== targetUser.university?.toString()) {
+      return NextResponse.json({ error: 'You can only message users from your own university' }, { status: 403 });
+    }
+
+    if (job && job.university?.toString() !== currentUser.university?.toString()) {
+      return NextResponse.json({ error: 'Unauthorized: job belongs to another university' }, { status: 403 });
     }
 
     // Look for existing conversation between these exact participants

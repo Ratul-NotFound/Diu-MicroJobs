@@ -86,7 +86,8 @@ export function Navbar({ user, notificationCount = 0, onLogout, onMenuToggle }: 
       {/* ── Left: Logo ── */}
       <div className={styles.left}>
         <Link href="/" className={styles.logo}>
-          DIU MicroJobs
+          <span className={styles.logoText}>Micro</span>
+          <span className={styles.logoTextAccent}>Jobs</span>
         </Link>
         <span className={styles.badge}>Beta</span>
       </div>
@@ -219,7 +220,8 @@ export function Navbar({ user, notificationCount = 0, onLogout, onMenuToggle }: 
           <div className={styles.mobilePanel}>
             <div className={styles.mobileHeader}>
               <span className={styles.logo} style={{ fontSize: 'var(--text-md)' }}>
-                DIU MicroJobs
+                <span className={styles.logoText}>Micro</span>
+                <span className={styles.logoTextAccent}>Jobs</span>
               </span>
               <button
                 className={styles.mobileClose}

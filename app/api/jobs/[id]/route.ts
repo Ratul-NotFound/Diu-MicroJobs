@@ -14,8 +14,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const decoded = await verifyAuth(request);
     await connectDB();
     const { id } = await params;
+
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id university').lean();
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     const job = await Job.findById(id)
       .populate('client', 'displayName photoURL rating completedJobs department role bio')
@@ -27,10 +33,21 @@ export async function GET(
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
 
+    // Verify university matches
+    if (job.university?.toString() !== user.university?.toString()) {
+      return NextResponse.json({ error: 'Unauthorized: this job belongs to another university' }, { status: 403 });
+    }
+
     return NextResponse.json({ job });
   } catch (error) {
     console.error('Get job error:', error);
-    return NextResponse.json({ error: 'Failed to fetch job' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+
+    if (message.includes('Unauthorized') || message.includes('token')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -58,7 +75,7 @@ export async function PATCH(
     }
 
     // Only the client (owner) can update their own job
-    if (job.client.toString() !== user._id.toString()) {
+    if (job.client.toString() !== user._id.toString() || job.university?.toString() !== user.university?.toString()) {
       return NextResponse.json({ error: 'Not authorized to update this job' }, { status: 403 });
     }
 
@@ -131,7 +148,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
 
-    if (job.client.toString() !== user._id.toString()) {
+    if (job.client.toString() !== user._id.toString() || job.university?.toString() !== user.university?.toString()) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
     }
 

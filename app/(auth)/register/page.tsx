@@ -6,8 +6,16 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import { Button, Input, Select } from '@/components/ui';
-import { isDiuEmail } from '@/lib/utils';
+import { apiClient } from '@/lib/api-client';
 import styles from './RegisterPage.module.css';
+
+interface UniversityInfo {
+  _id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+  departments: string[];
+}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,33 +31,42 @@ export default function RegisterPage() {
   const [role, setRole] = useState<'student' | 'faculty' | 'alumni' | 'department'>('student');
   const [department, setDepartment] = useState('');
   const [studentId, setStudentId] = useState('');
+  const [universityInfo, setUniversityInfo] = useState<UniversityInfo | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   useEffect(() => {
-    // Only redirect to dashboard once the profile is fully loaded
     if (!loading && profileChecked && userProfile) {
       router.push('/dashboard');
     }
   }, [loading, profileChecked, userProfile, router]);
 
   useEffect(() => {
-    // If user is authenticated on Firebase but has no MongoDB profile yet (e.g. Google login),
-    // skip step 1 and jump directly to the profile details form
     if (!loading && profileChecked && firebaseUser && !userProfile) {
-      setStep(2);
+      // For Google sign-in users, validate their email and skip to step 2
+      const email = firebaseUser.email;
+      if (email) {
+        setIsValidating(true);
+        apiClient<{ valid: boolean; university?: UniversityInfo; error?: string }>('/api/auth/validate-email', {
+          method: 'POST',
+          body: { email },
+        }).then(({ data }) => {
+          if (data?.valid && data.university) {
+            setUniversityInfo(data.university);
+            setStep(2);
+          }
+        }).finally(() => setIsValidating(false));
+      } else {
+        setStep(2);
+      }
     }
   }, [loading, profileChecked, firebaseUser, userProfile]);
 
-  const handleNextStep = (e: React.FormEvent) => {
+  const handleNextStep = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !confirmPassword) {
       addToast('Please fill in all fields', 'warning');
-      return;
-    }
-
-    if (!isDiuEmail(email)) {
-      addToast('Please use your official DIU email address (@diu.edu.bd, @daffodilvarsity.edu.bd or @s.diu.edu.bd)', 'error');
       return;
     }
 
@@ -63,7 +80,26 @@ export default function RegisterPage() {
       return;
     }
 
-    setStep(2);
+    // Validate university email via API
+    setIsValidating(true);
+    try {
+      const { data } = await apiClient<{ valid: boolean; university?: UniversityInfo; error?: string }>('/api/auth/validate-email', {
+        method: 'POST',
+        body: { email },
+      });
+
+      if (!data?.valid) {
+        addToast(data?.error || 'Your university is not registered on this platform', 'error');
+        return;
+      }
+
+      setUniversityInfo(data.university || null);
+      setStep(2);
+    } catch {
+      addToast('Failed to validate email. Please try again.', 'error');
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -96,17 +132,16 @@ export default function RegisterPage() {
     }
   };
 
-  const departmentOptions = [
-    { value: 'CSE', label: 'Computer Science & Engineering' },
-    { value: 'SWE', label: 'Software Engineering' },
-    { value: 'EEE', label: 'Electrical & Electronic Engineering' },
-    { value: 'TE', label: 'Textile Engineering' },
-    { value: 'Pharmacy', label: 'Department of Pharmacy' },
-    { value: 'English', label: 'Department of English' },
-    { value: 'BBA', label: 'Business Administration' },
-    { value: 'ESD', label: 'Enterprise Systems Development' },
-    { value: 'Administration', label: 'University Administration / Offices' },
-  ];
+  // Dynamic departments from matched university, with fallback
+  const departmentOptions = universityInfo?.departments?.length
+    ? universityInfo.departments.map((d) => ({ value: d, label: d }))
+    : [
+        { value: 'CSE', label: 'Computer Science & Engineering' },
+        { value: 'EEE', label: 'Electrical & Electronic Engineering' },
+        { value: 'BBA', label: 'Business Administration' },
+        { value: 'English', label: 'Department of English' },
+        { value: 'Other', label: 'Other' },
+      ];
 
   const roleOptions = [
     { value: 'student', label: 'Student (Freelancer & Client)' },
@@ -115,7 +150,7 @@ export default function RegisterPage() {
     { value: 'department', label: 'Department Office (Client only)' },
   ];
 
-  if (loading) {
+  if (loading || isValidating) {
     return (
       <div className={styles.container}>
         <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>Loading...</p>
@@ -127,20 +162,20 @@ export default function RegisterPage() {
     <div className={styles.container}>
       <h2 className={styles.title}>Create Account</h2>
       <p className={styles.subtitle}>
-        {step === 1 ? 'Step 1: Sign up details' : 'Step 2: University profile details'}
+        {step === 1 ? 'Step 1: Sign up details' : `Step 2: ${universityInfo?.shortName || 'University'} profile details`}
       </p>
 
       {step === 1 ? (
         <form onSubmit={handleNextStep} className={styles.form}>
           <Input
             type="email"
-            label="DIU Email Address"
-            placeholder="e.g. yourname.cse@diu.edu.bd"
+            label="University Email Address"
+            placeholder="e.g. yourname@university.edu"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            disabled={isSubmitting}
-            helperText="Requires a valid @diu.edu.bd, @daffodilvarsity.edu.bd, or @s.diu.edu.bd email"
+            disabled={isSubmitting || isValidating}
+            helperText="Use your official university email to sign up"
           />
           <Input
             type="password"
@@ -161,12 +196,18 @@ export default function RegisterPage() {
             disabled={isSubmitting}
           />
 
-          <Button type="submit" variant="primary" fullWidth>
+          <Button type="submit" variant="primary" fullWidth loading={isValidating}>
             Continue
           </Button>
         </form>
       ) : (
         <form onSubmit={handleRegister} className={styles.form}>
+          {universityInfo && (
+            <p style={{ textAlign: 'center', color: 'var(--color-primary)', fontWeight: 600, marginBottom: '0.5rem' }}>
+              🏫 {universityInfo.name} ({universityInfo.shortName})
+            </p>
+          )}
+
           <Input
             type="text"
             label="Full Name"
@@ -213,7 +254,6 @@ export default function RegisterPage() {
               type="button"
               variant="outline"
               onClick={() => {
-                // Only allow going back if the user is NOT already authenticated via Firebase
                 if (!firebaseUser) {
                   setStep(1);
                 }

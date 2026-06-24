@@ -24,6 +24,12 @@ const userSchema = new Schema<IUser>(
       required: true,
       unique: true,
     },
+    university: {
+      type: Schema.Types.ObjectId,
+      ref: 'University',
+      required: true,
+      index: true,
+    },
     displayName: {
       type: String,
       required: true,
@@ -92,7 +98,7 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-userSchema.index({ status: 1, role: 1 });
+userSchema.index({ university: 1, status: 1, role: 1 });
 userSchema.index({ skills: 1 });
 
 const User =

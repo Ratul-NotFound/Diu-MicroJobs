@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <div className={styles.welcomeText}>
           <h2 className={styles.title}>Hello, {userProfile?.displayName} 👋</h2>
           <p className={styles.subtitle}>
-            Welcome to your Daffodil International University MicroJobs workspace.
+            Welcome to your {userProfile?.university?.name || 'University'} MicroJobs workspace.
           </p>
         </div>
         <div className={styles.heroActions}>

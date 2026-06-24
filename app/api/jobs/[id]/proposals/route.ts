@@ -58,8 +58,8 @@ export async function POST(
     const { id: jobId } = await params;
 
     const [user, job] = await Promise.all([
-      User.findOne({ firebaseUid: decoded.uid }).select('_id status displayName photoURL rating').lean(),
-      Job.findById(jobId).select('client status').lean(),
+      User.findOne({ firebaseUid: decoded.uid }).select('_id status displayName photoURL rating university').lean(),
+      Job.findById(jobId).select('client status university').lean(),
     ]);
 
     if (!user) {
@@ -80,6 +80,11 @@ export async function POST(
 
     if (job.client.toString() === user._id.toString()) {
       return NextResponse.json({ error: 'You cannot apply to your own job' }, { status: 400 });
+    }
+
+    // Ensure the freelancer belongs to the same university
+    if (user.university?.toString() !== job.university?.toString()) {
+      return NextResponse.json({ error: 'You can only apply to jobs within your university' }, { status: 403 });
     }
 
     // Check if already applied

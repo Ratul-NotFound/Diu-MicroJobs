@@ -152,12 +152,14 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Validate DIU email domain
+ * Extract the domain from an email address.
+ * e.g. "user@buet.ac.bd" → "buet.ac.bd"
  */
-export function isDiuEmail(email: string): boolean {
-  const diuDomains = ['@diu.edu.bd', '@daffodilvarsity.edu.bd', '@s.diu.edu.bd'];
-  return diuDomains.some((domain) => email.toLowerCase().endsWith(domain));
+export function getEmailDomain(email: string): string {
+  return email.toLowerCase().split('@')[1] || '';
 }
+
+
 
 /**
  * Generate a random color for avatar fallback

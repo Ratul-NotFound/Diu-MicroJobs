@@ -97,7 +97,7 @@ const HOW_STEPS = [
   {
     step: '02',
     title: 'Receive Proposals',
-    desc: 'Skilled DIU students and alumni submit proposals with cover letters and bids.',
+    desc: 'Skilled students and alumni submit proposals with cover letters and bids.',
     icon: MessageSquare,
   },
   {
@@ -112,7 +112,7 @@ const TESTIMONIALS = [
   {
     text: "Got my final-year project presentation slides done in 24 hours. Absolutely stunning quality. Will hire again!",
     author: 'Md. Rafiqul Islam',
-    role: 'CSE Faculty — DIU',
+    role: 'CSE Faculty',
     rating: 5,
     initials: 'RI',
   },
@@ -125,7 +125,7 @@ const TESTIMONIALS = [
   },
   {
     text: "We needed event photos urgently. Found a talented student photographer within hours. Campus is full of talent!",
-    author: 'Business Club DIU',
+    author: 'Business Club',
     role: 'Department Client',
     rating: 5,
     initials: 'BC',
@@ -134,8 +134,8 @@ const TESTIMONIALS = [
 
 const FAQS = [
   {
-    q: "Who can register on DIU MicroJobs?",
-    a: "Only active students, faculty members, departments, and alumni of Daffodil International University can register. A verified @diu.edu.bd or @s.diu.edu.bd email address is strictly required."
+    q: "Who can register on MicroJobs?",
+    a: "Only active students, faculty members, departments, and alumni of registered universities can register. A verified official university email address is strictly required."
   },
   {
     q: "How do payments work?",
@@ -147,15 +147,15 @@ const FAQS = [
   },
   {
     q: "How does verification work?",
-    a: "We verify every account using DIU's official Google Workspace email verification. This ensures zero fake profiles and a highly secure campus marketplace."
+    a: "We verify every account using your university's official email domain. This ensures zero fake profiles and a highly secure campus marketplace."
   }
 ] as const;
 
 const FEATURES = [
   {
     icon: ShieldCheck,
-    title: 'DIU Email Verified',
-    desc: 'All accounts require an official @diu.edu.bd or @s.diu.edu.bd email — zero fake profiles.',
+    title: 'University Email Verified',
+    desc: 'All accounts require an official university email domain — zero fake profiles.',
   },
   {
     icon: Clock,
@@ -292,7 +292,7 @@ export default function Home() {
             <div className={styles.heroLeft}>
               <div className={styles.heroBadge}>
                 <span className={styles.badgeDot} />
-                Exclusively for Daffodil International University
+                Exclusively for University Students
               </div>
 
               <h1 className={styles.heroTitle}>
@@ -302,7 +302,7 @@ export default function Home() {
               </h1>
 
               <p className={styles.heroSubtitle}>
-                DIU MicroJobs connects university clients with skilled student 
+                MicroJobs connects university clients with skilled student 
                 freelancers — developers, designers, photographers & more. 
                 Fast, affordable, and campus-verified.
               </p>
@@ -344,7 +344,7 @@ export default function Home() {
                   ))}
                 </div>
                 <p className={styles.trustedText}>
-                  Join <strong>500+ DIU students</strong> already earning on campus
+                  Join <strong>verified students</strong> already earning on campus
                 </p>
               </div>
             </div>
@@ -354,7 +354,7 @@ export default function Home() {
               <div className={styles.heroImageWrapper}>
                 <img
                   src="/images/campus_freelance_hero.png"
-                  alt="Diu MicroJobs Student Freelancing"
+                  alt="MicroJobs Student Freelancing"
                   className={styles.heroImage}
                 />
                 <div className={styles.heroOverlayGradient} />
@@ -391,8 +391,8 @@ export default function Home() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <ShieldCheck size={22} style={{ color: '#1dc071' }} />
                   <div>
-                    <div style={{ color: '#6ee7b7', fontSize: '0.8125rem', fontWeight: 600 }}>100% DIU Verified</div>
-                    <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.6875rem', marginTop: '2px' }}>Exclusively for Daffodil Students</div>
+                    <div style={{ color: '#6ee7b7', fontSize: '0.8125rem', fontWeight: 600 }}>100% University Verified</div>
+                    <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.6875rem', marginTop: '2px' }}>Exclusively for Verified Students</div>
                   </div>
                 </div>
               </div>
@@ -407,10 +407,10 @@ export default function Home() {
           <div className={styles.brandBarInner}>
             <span className={styles.brandTrustLabel}>Trusted by campus groups:</span>
             <div className={styles.brandLogos}>
-              <div className={styles.brandLogo}>DIU CSE Department</div>
-              <div className={styles.brandLogo}>DIU Business Club</div>
+              <div className={styles.brandLogo}>CSE Department</div>
+              <div className={styles.brandLogo}>Business Club</div>
               <div className={styles.brandLogo}>SWE Association</div>
-              <div className={styles.brandLogo}>DIU Robotics Club</div>
+              <div className={styles.brandLogo}>Robotics Club</div>
               <div className={styles.brandLogo}>IEEE Student Branch</div>
             </div>
           </div>
@@ -440,7 +440,7 @@ export default function Home() {
               Browse Categories
             </div>
             <h2>What do you need help with?</h2>
-            <p>Explore jobs across every department and skill set at DIU.</p>
+            <p>Explore jobs across every department and skill set at your university.</p>
           </div>
 
           <div className={styles.categoryGrid}>
@@ -514,7 +514,7 @@ export default function Home() {
               Simple Process
             </div>
             <h2>Get work done in 3 easy steps</h2>
-            <p>Post a job, choose a freelancer, and get results — all within the DIU campus network.</p>
+            <p>Post a job, choose a freelancer, and get results — all within your campus network.</p>
           </div>
 
           <div className={styles.howGrid}>
@@ -536,8 +536,8 @@ export default function Home() {
       <section className={styles.features} aria-label="Why DIU MicroJobs">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <div className={styles.sectionChip}><Award size={12} /> Why DIU MicroJobs</div>
-            <h2>Built for the DIU community</h2>
+            <div className={styles.sectionChip}><Award size={12} /> Why MicroJobs</div>
+            <h2>Built for the campus community</h2>
             <p>No external platforms, no middlemen — just trusted peers doing great work.</p>
           </div>
 
@@ -560,7 +560,7 @@ export default function Home() {
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionChip}><Star size={12} /> Testimonials</div>
-            <h2>Loved by the DIU Community</h2>
+            <h2>Loved by the Campus Community</h2>
             <p>Real reviews from students, faculty, and departments.</p>
           </div>
 
@@ -592,7 +592,7 @@ export default function Home() {
           <div className={styles.sectionHeader}>
             <div className={styles.sectionChip}><MessageSquare size={12} /> FAQ</div>
             <h2>Frequently Asked Questions</h2>
-            <p>Everything you need to know about DIU MicroJobs platform.</p>
+            <p>Everything you need to know about MicroJobs platform.</p>
           </div>
 
           <div className={styles.faqGrid}>
@@ -627,8 +627,8 @@ export default function Home() {
         <div className={styles.ctaBgOverlay} />
         <div className={styles.container}>
           <div className={styles.ctaHeaderSection}>
-            <h2>Ready to join DIU's freelance economy?</h2>
-            <p>Select your path and get started in under 2 minutes with your official DIU email.</p>
+            <h2>Ready to join the campus freelance economy?</h2>
+            <p>Select your path and get started in under 2 minutes with your official university email.</p>
           </div>
 
           <div className={styles.ctaSplitGrid}>
@@ -638,7 +638,7 @@ export default function Home() {
               <h3>Hire verified student talent</h3>
               <p>Post your project, receive proposals from skilled students, review portfolios, and pay securely in BDT.</p>
               <div className={styles.ctaCardBenefits}>
-                <span className={styles.ctaBenefit}><ShieldCheck size={14} /> 100% DIU Email Verified</span>
+                <span className={styles.ctaBenefit}><ShieldCheck size={14} /> 100% University Verified</span>
                 <span className={styles.ctaBenefit}><ShieldCheck size={14} /> BDT Pricing & Secure deals</span>
               </div>
               <Link href={firebaseUser ? "/jobs/create" : "/register"} className={styles.ctaCardBtn}>
@@ -663,7 +663,7 @@ export default function Home() {
           
           <div className={styles.ctaNote}>
             <ShieldCheck size={13} />
-            Requires an official @diu.edu.bd or @s.diu.edu.bd email address
+            Requires a verified official university email address
           </div>
         </div>
       </section>

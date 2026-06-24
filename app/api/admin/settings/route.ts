@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { verifyAdmin } from '@/lib/admin-auth';
 import { connectDB } from '@/lib/mongodb';
+import University from '@/models/University';
 
-// Mock settings storage in-memory for the MVP (can be extended to MongoDB later)
+// Platform settings (university domains are now managed via the University collection)
 let platformSettings = {
-  allowedDomains: ['diu.edu.bd', 'daffodilvarsity.edu.bd', 's.diu.edu.bd'],
   autoApproveJobs: false,
   maxJobsPerUser: 5,
   maintenanceMode: false,
@@ -13,7 +13,19 @@ let platformSettings = {
 export async function GET(request: Request) {
   try {
     const { admin } = await verifyAdmin(request, 'super_admin');
-    return NextResponse.json({ settings: platformSettings });
+    await connectDB();
+
+    // Fetch allowed domains dynamically from universities
+    const universities = await University.find({ isActive: true }).select('name shortName domains').lean();
+    const allowedDomains = universities.flatMap((u) => u.domains);
+
+    return NextResponse.json({
+      settings: {
+        ...platformSettings,
+        allowedDomains,
+        universities,
+      },
+    });
   } catch (error) {
     console.error('Get settings error:', error);
     const message = error instanceof Error ? error.message : 'Internal server error';
@@ -24,11 +36,10 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { admin } = await verifyAdmin(request, 'super_admin');
-    
-    const body = await request.json();
-    const { allowedDomains, autoApproveJobs, maxJobsPerUser, maintenanceMode } = body;
 
-    if (allowedDomains !== undefined) platformSettings.allowedDomains = allowedDomains;
+    const body = await request.json();
+    const { autoApproveJobs, maxJobsPerUser, maintenanceMode } = body;
+
     if (autoApproveJobs !== undefined) platformSettings.autoApproveJobs = autoApproveJobs;
     if (maxJobsPerUser !== undefined) platformSettings.maxJobsPerUser = maxJobsPerUser;
     if (maintenanceMode !== undefined) platformSettings.maintenanceMode = maintenanceMode;

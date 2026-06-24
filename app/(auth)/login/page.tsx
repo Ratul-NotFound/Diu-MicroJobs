@@ -77,8 +77,8 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className={styles.form}>
         <Input
           type="email"
-          label="DIU Email Address"
-          placeholder="e.g. name.cse@diu.edu.bd"
+          label="University Email Address"
+          placeholder="e.g. yourname@university.edu"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -144,7 +144,7 @@ export default function LoginPage() {
       </Button>
 
       <div className={styles.signupPrompt}>
-        <span>New to DIU MicroJobs? </span>
+        <span>New here? </span>
         <Link href="/register" className={styles.signupLink}>
           Create an account
         </Link>

@@ -12,10 +12,12 @@ export async function GET(request: Request) {
     const status = searchParams.get('status') || 'pending_review';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
+    const university = searchParams.get('university');
     const skip = (page - 1) * limit;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: Record<string, any> = { status };
+    if (university) query.university = university;
 
     const [jobs, total] = await Promise.all([
       Job.find(query)

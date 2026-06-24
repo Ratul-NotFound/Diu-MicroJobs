@@ -4,16 +4,24 @@ import { connectDB } from '@/lib/mongodb';
 import Job from '@/models/Job';
 import User from '@/models/User';
 import Category from '@/models/Category';
+import University from '@/models/University';
 import mongoose from 'mongoose';
 import { sanitizeData } from '@/lib/security';
 
 /**
  * GET /api/jobs
  * List jobs with filtering, search, and pagination.
+ * Jobs are scoped to the authenticated user's university.
  */
 export async function GET(request: Request) {
   try {
+    const decoded = await verifyAuth(request);
     await connectDB();
+
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id university').lean();
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -29,9 +37,9 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
 
-    // Build query
+    // Build query — always scoped to user's university
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: Record<string, any> = {};
+    const query: Record<string, any> = { university: user.university };
 
     if (status) query.status = status;
     if (subcategory) query.subcategory = subcategory;
@@ -104,7 +112,7 @@ export async function GET(request: Request) {
 
 /**
  * POST /api/jobs
- * Create a new job posting.
+ * Create a new job posting. University is stamped from the authenticated user.
  */
 export async function POST(request: Request) {
   try {
@@ -123,7 +131,6 @@ export async function POST(request: Request) {
     const body = sanitizeData(await request.json());
     const { title, description, category, subcategory, budget, deadline, skills, urgency, attachments, status, thumbnail } = body;
 
-    // Validate required fields
     if (!title || !description || !category || !budget || !deadline) {
       return NextResponse.json({ error: 'Title, description, category, budget, and deadline are required' }, { status: 400 });
     }
@@ -136,6 +143,7 @@ export async function POST(request: Request) {
       budget,
       deadline: new Date(deadline),
       client: user._id,
+      university: user.university,
       status: status === 'draft' ? 'draft' : 'pending_review',
       skills: skills || [],
       urgency: urgency || 'normal',

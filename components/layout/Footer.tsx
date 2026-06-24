@@ -33,9 +33,9 @@ export function Footer({ className }: FooterProps) {
         <div className={styles.columns}>
           {/* Column 1: Brand */}
           <div className={styles.brand}>
-            <span className={styles.brandLogo}>DIU MicroJobs</span>
+            <span className={styles.brandLogo}>MicroJobs</span>
             <p className={styles.brandDescription}>
-              The trusted freelancing platform for the Daffodil International University community.
+              The trusted student freelancing and micro-jobs marketplace.
               Connect with talented students, faculty, and alumni for your next project.
             </p>
           </div>
@@ -57,11 +57,11 @@ export function Footer({ className }: FooterProps) {
             <h4 className={styles.columnTitle}>Contact</h4>
             <div className={styles.contactItem}>
               <MapPin size={16} className={styles.contactIcon} />
-              <span>Daffodil International University, Ashulia, Dhaka</span>
+              <span>Registered University Campuses, Dhaka, Bangladesh</span>
             </div>
             <div className={styles.contactItem}>
               <Mail size={16} className={styles.contactIcon} />
-              <span>support@diumicrojobs.com</span>
+              <span>support@campusmicrojobs.com</span>
             </div>
             <div className={styles.contactItem}>
               <Phone size={16} className={styles.contactIcon} />
@@ -75,7 +75,7 @@ export function Footer({ className }: FooterProps) {
       <div className={styles.bottom}>
         <div className={`${styles.container} ${styles.bottomContent}`}>
           <span className={styles.copyright}>
-            © 2025 DIU MicroJobs. A platform for Daffodil International University.
+            © 2025 MicroJobs. All rights reserved.
           </span>
         </div>
       </div>

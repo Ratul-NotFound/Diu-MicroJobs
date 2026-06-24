@@ -16,8 +16,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
       <div className={styles.cardWrapper}>
         <div className={styles.branding}>
-          <div className={styles.logo}>DIU MicroJobs</div>
-          <p className={styles.tagline}>The micro-freelancing platform for Daffodil International University</p>
+          <div className={styles.logo}>MicroJobs</div>
+          <p className={styles.tagline}>The student freelancing & micro-jobs marketplace</p>
         </div>
         {children}
       </div>

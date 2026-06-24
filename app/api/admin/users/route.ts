@@ -14,12 +14,14 @@ export async function GET(request: Request) {
     const search = searchParams.get('search') || '';
     const role = searchParams.get('role');
     const status = searchParams.get('status');
+    const university = searchParams.get('university');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: Record<string, any> = {};
 
     if (role) query.role = role;
     if (status) query.status = status;
+    if (university) query.university = university;
 
     if (search) {
       query.$or = [
@@ -34,6 +36,7 @@ export async function GET(request: Request) {
     const [users, total] = await Promise.all([
       User.find(query)
         .select('-portfolio -skills -bio')
+        .populate('university', 'name shortName slug')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)

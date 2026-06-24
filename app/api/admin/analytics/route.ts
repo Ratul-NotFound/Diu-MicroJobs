@@ -10,6 +10,13 @@ export async function GET(request: Request) {
     const { admin } = await verifyAdmin(request, 'support');
     await connectDB();
 
+    const { searchParams } = new URL(request.url);
+    const universityFilter = searchParams.get('university');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uniQuery: Record<string, any> = universityFilter ? { university: universityFilter } : {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const jobUniQuery: Record<string, any> = universityFilter ? { university: universityFilter } : {};
+
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -24,16 +31,18 @@ export async function GET(request: Request) {
       usersByRole,
       rawCategoryDistribution,
     ] = await Promise.all([
-      User.countDocuments(),
-      Job.countDocuments(),
-      Job.countDocuments({ status: 'completed' }),
-      Job.countDocuments({ status: { $in: ['open', 'in_progress', 'delivered', 'revision_requested', 'contracted'] } }),
-      User.countDocuments({ createdAt: { $gte: startOfMonth } }),
-      Job.countDocuments({ createdAt: { $gte: startOfMonth } }),
+      User.countDocuments(uniQuery),
+      Job.countDocuments(jobUniQuery),
+      Job.countDocuments({ ...jobUniQuery, status: 'completed' }),
+      Job.countDocuments({ ...jobUniQuery, status: { $in: ['open', 'in_progress', 'delivered', 'revision_requested', 'contracted'] } }),
+      User.countDocuments({ ...uniQuery, createdAt: { $gte: startOfMonth } }),
+      Job.countDocuments({ ...jobUniQuery, createdAt: { $gte: startOfMonth } }),
       User.aggregate([
+        { $match: uniQuery },
         { $group: { _id: '$role', count: { $sum: 1 } } },
       ]),
       Job.aggregate([
+        { $match: jobUniQuery },
         { $group: { _id: '$category', count: { $sum: 1 } } },
       ]),
     ]);

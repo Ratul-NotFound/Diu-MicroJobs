@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const decoded = await verifyAuth(request);
     await connectDB();
 
-    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id').lean();
+    const user = await User.findOne({ firebaseUid: decoded.uid }).select('_id university').lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
 
-    if (job.client.toString() !== user._id.toString()) {
+    if (job.client.toString() !== user._id.toString() || job.university?.toString() !== user.university?.toString()) {
       return NextResponse.json({ error: 'Only the job owner can create a contract' }, { status: 403 });
     }
 

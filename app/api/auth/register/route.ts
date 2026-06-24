@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
-import { isDiuEmail } from '@/lib/utils';
+import { findUniversityByEmail } from '@/lib/utils-server';
 
 /**
  * POST /api/auth/register
@@ -11,10 +11,16 @@ import { isDiuEmail } from '@/lib/utils';
 export async function POST(request: Request) {
   try {
     const decoded = await verifyAuth(request);
-    if (decoded.email && !isDiuEmail(decoded.email)) {
-      return NextResponse.json({ error: 'Only official DIU email addresses are permitted' }, { status: 403 });
-    }
     await connectDB();
+
+    // Validate university email
+    const university = await findUniversityByEmail(decoded.email || '');
+    if (!university) {
+      return NextResponse.json(
+        { error: 'Your university is not registered on this platform' },
+        { status: 403 }
+      );
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ firebaseUid: decoded.uid });
@@ -36,7 +42,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
     }
 
-    // Create user document
+    // Create user document with university reference
     const user = await User.create({
       firebaseUid: decoded.uid,
       email: decoded.email,
@@ -45,6 +51,7 @@ export async function POST(request: Request) {
       role,
       department: department || '',
       studentId: studentId || '',
+      university: university._id,
     });
 
     return NextResponse.json({ user }, { status: 201 });

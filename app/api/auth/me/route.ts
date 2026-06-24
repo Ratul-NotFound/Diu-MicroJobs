@@ -3,7 +3,8 @@ import { verifyAuth } from '@/lib/firebase-admin';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import Admin from '@/models/Admin';
-import { isDiuEmail } from '@/lib/utils';
+import University from '@/models/University';
+import { findUniversityByEmail } from '@/lib/utils-server';
 
 /**
  * GET /api/auth/me
@@ -12,13 +13,22 @@ import { isDiuEmail } from '@/lib/utils';
 export async function GET(request: Request) {
   try {
     const decoded = await verifyAuth(request);
-    if (decoded.email && !isDiuEmail(decoded.email)) {
-      return NextResponse.json({ error: 'Only official DIU email addresses are permitted' }, { status: 403 });
+
+    // Validate university email
+    const university = await findUniversityByEmail(decoded.email || '');
+    if (!university) {
+      return NextResponse.json(
+        { error: 'Your university is not registered on this platform' },
+        { status: 403 }
+      );
     }
+
     await connectDB();
 
     const [user, admin] = await Promise.all([
-      User.findOne({ firebaseUid: decoded.uid }).lean(),
+      User.findOne({ firebaseUid: decoded.uid })
+        .populate('university', 'name shortName slug departments')
+        .lean(),
       Admin.findOne({ firebaseUid: decoded.uid, status: 'active' })
         .select('firebaseUid email displayName role permissions status')
         .lean(),
