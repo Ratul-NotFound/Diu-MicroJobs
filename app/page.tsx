@@ -275,6 +275,52 @@ const TESTIMONIALS = [
   },
 ] as const;
 
+const POPULAR_GIGS = [
+  {
+    id: 'gig-1',
+    title: "Develop Responsive Portfolio Website in React / Next.js",
+    price: "BDT 3,000",
+    rating: "4.9",
+    reviews: 18,
+    category: "Web & App Dev",
+    thumbnail: "/images/gig_web.png",
+    freelancer: { name: "Anisur Rahman", dept: "CSE, DIU", initials: "AR" },
+    tag: "Best Seller"
+  },
+  {
+    id: 'gig-2',
+    title: "Professional Club Logo, Banner & UI/UX Design",
+    price: "BDT 1,500",
+    rating: "5.0",
+    reviews: 12,
+    category: "Design",
+    thumbnail: "/images/gig_design.png",
+    freelancer: { name: "Nusrat Jahan", dept: "SWE, DIU", initials: "NJ" },
+    tag: "Popular"
+  },
+  {
+    id: 'gig-3',
+    title: "Academic Presentation Slides & Pitch Deck Design",
+    price: "BDT 800",
+    rating: "4.8",
+    reviews: 32,
+    category: "Slides & Docs",
+    thumbnail: "/images/gig_slides.png",
+    freelancer: { name: "Tanvir Ahmed", dept: "BBA, DU", initials: "TA" }
+  },
+  {
+    id: 'gig-4',
+    title: "Campus Event Photography & Professional Retouching",
+    price: "BDT 2,500",
+    rating: "5.0",
+    reviews: 9,
+    category: "Photography",
+    thumbnail: "/images/gig_photo.png",
+    freelancer: { name: "Sajid Hasan", dept: "EEE, BUET", initials: "SH" },
+    tag: "Trending"
+  }
+];
+
 const FAQS = [
   {
     q: "Who can register on Microjobs?",
@@ -294,28 +340,7 @@ const FAQS = [
   }
 ] as const;
 
-const FEATURES = [
-  {
-    icon: ShieldCheck,
-    title: 'University Email Verified',
-    desc: 'All accounts require an official university email domain — zero fake profiles.',
-  },
-  {
-    icon: Clock,
-    title: 'Fast Turnaround',
-    desc: 'Students are on campus — get proposals within hours and work delivered same-day.',
-  },
-  {
-    icon: Globe2,
-    title: 'BDT Pricing',
-    desc: 'All payments in BDT, campus-friendly rates. No international platform fees.',
-  },
-  {
-    icon: Star,
-    title: 'Rated & Reviewed',
-    desc: 'Every job ends with a review. Build your campus reputation and portfolio.',
-  },
-];
+
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
@@ -494,6 +519,16 @@ export default function Home() {
               Join the elite network of university freelancers. Get top-tier development, design, and writing done quickly by verified students.
             </motion.p>
 
+            {/* Marketplace CTA Buttons */}
+            <motion.div className={styles.heroCtaButtons} variants={heroItemVariants}>
+              <Link href={firebaseUser ? "/jobs/create" : "/register"} className={styles.heroBtnPrimary}>
+                Post a Project
+              </Link>
+              <Link href={firebaseUser ? "/jobs" : "/register"} className={styles.heroBtnSecondary}>
+                Earn Money Freelancing
+              </Link>
+            </motion.div>
+
             {/* Centered Search */}
             <motion.div className={styles.heroSearchCentered} variants={heroItemVariants}>
               <div className={styles.heroSearchInputWrap}>
@@ -524,29 +559,14 @@ export default function Home() {
                 </button>
               ))}
             </motion.div>
-            
-            {/* Embedded Trust Stats */}
-            <motion.div className={styles.heroTrustStats} variants={heroItemVariants}>
-              <div className={styles.trustStat}>
-                <strong>{stats?.completedJobs || '1,200+'}</strong>
-                <span>Jobs Done</span>
-              </div>
-              <div className={styles.trustStatDivider} />
-              <div className={styles.trustStat}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
-                  <Star size={16} fill="#f59e0b" color="#f59e0b" />
-                  <strong>{stats?.avgRating || '4.9'}/5</strong>
-                </div>
-                <span>Avg Rating</span>
-              </div>
-              <div className={styles.trustStatDivider} />
-              <div className={styles.trustStat}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
-                  <ShieldCheck size={16} color="#1dc071" />
-                  <strong>100%</strong>
-                </div>
-                <span>Verified Students</span>
-              </div>
+
+            {/* Trusted by Campus Clubs */}
+            <motion.div className={styles.heroPartnerLogos} variants={heroItemVariants}>
+              <span className={styles.partnerLabel}>Trusted by:</span>
+              <span className={styles.partnerLogo}>DIU Computer Club</span>
+              <span className={styles.partnerLogo}>BUET Robotics Society</span>
+              <span className={styles.partnerLogo}>DU Debating Club</span>
+              <span className={styles.partnerLogo}>NSU Business Club</span>
             </motion.div>
           </motion.div>
         </div>
@@ -718,6 +738,87 @@ export default function Home() {
         </div>
       </motion.section>
 
+      {/* ─── POPULAR SERVICES ───────────────────────────────────────────── */}
+      <motion.section 
+        className={styles.gigsSection} 
+        aria-label="Popular Campus Services"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+      >
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionChip}>
+              <Briefcase size={12} />
+              Popular Campus Gigs
+            </div>
+            <h2>Make it all happen with student freelancers</h2>
+            <p>Direct BDT deals. Vetted university creators. Zero platform commission.</p>
+          </div>
+
+          <div className={styles.gigGrid}>
+            {POPULAR_GIGS.map((gig) => (
+              <motion.div
+                key={gig.id}
+                className={styles.gigCard}
+                variants={cardVariants}
+                whileHover={{ 
+                  y: -6, 
+                  scale: 1.015,
+                  transition: { type: "spring", stiffness: 300, damping: 20 }
+                }}
+                whileTap={{ scale: 0.985 }}
+                onClick={() => router.push(`/jobs?search=${encodeURIComponent(gig.category)}`)}
+                style={{ contentVisibility: 'auto' } as React.CSSProperties}
+              >
+                <div className={styles.gigCardThumbnailWrap}>
+                  <img src={gig.thumbnail} alt={gig.title} className={styles.gigCardThumbnail} loading="lazy" />
+                </div>
+
+                <div className={styles.gigCardBody}>
+                  <div className={styles.gigCategoryBadge}>
+                    {gig.category}
+                  </div>
+                  
+                  <h3 className={styles.gigCardTitle}>{gig.title}</h3>
+                  
+                  <div className={styles.gigRatingWrap}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                      <strong>{gig.rating}</strong>
+                    </div>
+                    <span className={styles.gigReviewsCount}>({gig.reviews} reviews)</span>
+                    {gig.tag && (
+                      <span className={styles.gigCardTag} style={{
+                        backgroundColor: gig.tag === 'Best Seller' ? 'rgba(29,192,113,0.1)' : 'rgba(59,130,246,0.1)',
+                        color: gig.tag === 'Best Seller' ? '#1dc071' : '#3b82f6'
+                      }}>
+                        {gig.tag}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className={styles.gigCardFooter}>
+                    <div className={styles.gigAuthorBox}>
+                      <div className={styles.gigAuthorAvatar}>{gig.freelancer.initials}</div>
+                      <div className={styles.gigAuthorDetails}>
+                        <div className={styles.gigAuthorName}>{gig.freelancer.name}</div>
+                        <div className={styles.gigAuthorDept}>{gig.freelancer.dept}</div>
+                      </div>
+                    </div>
+                    <div className={styles.gigPriceContainer}>
+                      <span className={styles.gigPriceLabel}>Starting from</span>
+                      <strong className={styles.gigPriceValue}>{gig.price}</strong>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
       {/* ─── HOW IT WORKS ───────────────────────────────────────────────── */}
       <motion.section 
         id="how-it-works" 
@@ -789,42 +890,81 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* ─── FEATURE BULLETS ────────────────────────────────────────────── */}
+      {/* ─── WHAT MAKES US DIFFERENT (PeoplePerHour Checklist + Image) ─── */}
       <motion.section 
-        className={styles.featuresDark} 
-        aria-label="Why Microjobs"
+        className={styles.differentSection} 
+        aria-label="What Makes Us Different"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
       >
         <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionChip}><Award size={12} /> Why Microjobs</div>
-            <h2>Built for the campus community</h2>
-            <p>No external platforms, no middlemen — just trusted peers doing great work.</p>
-          </div>
-
-          <div className={styles.featuresGrid}>
-            {FEATURES.map(({ icon: Icon, title, desc }, idx) => (
-              <motion.div 
-                key={title} 
-                className={styles.featureCard}
-                variants={cardVariants}
-                whileHover={{ 
-                  y: -6, 
-                  scale: 1.015,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
-                whileTap={{ scale: 0.985 }}
-              >
-                <div className={styles.featureCardIcon}>
-                  <Icon size={20} />
+          <div className={styles.differentGrid}>
+            {/* Left Column: Value Propositions / Checklist */}
+            <div className={styles.differentLeft}>
+              <div className={styles.sectionChip}>
+                <Award size={12} /> What Makes Us Different
+              </div>
+              <h2>Why students and clients choose Microjobs</h2>
+              <p className={styles.differentDesc}>
+                Microjobs is the premier student freelance marketplace, designed specifically for the unique needs of the campus community.
+              </p>
+              
+              <ul className={styles.differentList}>
+                {[
+                  {
+                    title: "Verified Official University Domains",
+                    desc: "Every account is linked to an official university email. No random external profiles or anonymous users."
+                  },
+                  {
+                    title: "Zero Middleman Fees",
+                    desc: "We don't take a cut of your earnings. Keep 100% of the price you agree on with your client."
+                  },
+                  {
+                    title: "Secure Contract Escrow",
+                    desc: "Funds are held securely by the platform and only released when the client approves the completed work."
+                  },
+                  {
+                    title: "Same-Day Campus Delivery",
+                    desc: "Freelancers are physically on campus, enabling quick face-to-face updates and rapid project turnarounds."
+                  }
+                ].map((item, index) => (
+                  <motion.li 
+                    key={index}
+                    className={styles.differentItem}
+                    variants={cardVariants}
+                  >
+                    <div className={styles.differentCheckIcon}>
+                      <ShieldCheck size={18} />
+                    </div>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* Right Column: Visual Card with student_designer.png */}
+            <motion.div 
+              className={styles.differentRight}
+              variants={cardVariants}
+            >
+              <div className={styles.differentImgContainer}>
+                <div className={styles.differentImgWrap}>
+                  <img 
+                    src="/images/student_designer.png" 
+                    alt="Student Designer at work" 
+                    className={styles.differentImg}
+                  />
                 </div>
-                <h4 className={styles.featureCardTitle}>{title}</h4>
-                <p className={styles.featureCardDesc}>{desc}</p>
-              </motion.div>
-            ))}
+                <div className={styles.differentImgCaption}>
+                  Farzana S., Graphics & UI/UX Designer
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
