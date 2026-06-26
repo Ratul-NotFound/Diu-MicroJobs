@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = 'mongodb+srv://diu_admin:qgIysaCYgdfShy6V@diumicrojobs.1mxcoqf.mongodb.net/diu-microjobs?retryWrites=true&w=majority&appName=DiuMicroJobs';
+const MONGODB_URI = 'mongodb+srv://diu_admin:qgIysaCYgdfShy6V@diumicrojobs.1mxcoqf.mongodb.net/diu-microjobs?retryWrites=true&w=majority&appName=DiuMicroJobs';
 
 const categorySchema = new mongoose.Schema(
   {
@@ -19,12 +19,16 @@ const Category = mongoose.models.Category || mongoose.model("Category", category
 
 async function run() {
   try {
-    await mongoose.connect(uri);
-    console.log('Connected to MongoDB.');
+    console.log('Connecting to:', MONGODB_URI);
+    await mongoose.connect(MONGODB_URI);
+    console.log('Connected to database.');
 
-    const categories = await Category.find({ isActive: { $ne: false } }).sort({ order: 1 }).lean();
-    console.log(`Total categories via Mongoose: ${categories.length}`);
-    console.log('Categories:', JSON.stringify(categories.map(c => ({ id: c._id, name: c.name, isActive: c.isActive, order: c.order })), null, 2));
+    const categories = await Category.find({ isActive: { $ne: false } })
+      .sort({ order: 1 })
+      .lean();
+
+    console.log(`Total categories fetched via API logic: ${categories.length}`);
+    console.log('Categories:', JSON.stringify(categories, null, 2));
 
   } catch (error) {
     console.error('Error:', error);

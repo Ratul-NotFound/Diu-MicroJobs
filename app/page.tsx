@@ -431,16 +431,38 @@ export default function Home() {
     { value: stats?.departmentsCount ?? '15+', label: 'Departments' },
   ];
 
-  const activeCategories = categories.length > 0
-    ? categories.map((cat, idx) => ({
-        id: (cat as any).slug || cat._id,
-        name: cat.name,
-        icon: getCategoryIcon(cat.icon),
-        color: ACCENT_COLORS[idx % ACCENT_COLORS.length],
-        count: `${(cat as any).jobCount || 0}+`,
-        subcategories: (cat as any).subcategories || [],
-      }))
-    : CATEGORIES;
+  const activeCategories = [
+    ...CATEGORIES.map((staticCat, idx) => {
+      const dbCat = categories.find(
+        (c) => c.slug === staticCat.id || c.name.toLowerCase() === staticCat.name.toLowerCase()
+      );
+
+      return {
+        id: staticCat.id,
+        name: staticCat.name,
+        icon: dbCat ? getCategoryIcon(dbCat.icon) : staticCat.icon,
+        color: staticCat.color || ACCENT_COLORS[idx % ACCENT_COLORS.length],
+        count: dbCat ? `${dbCat.jobCount || 0}+` : staticCat.count,
+        subcategories: dbCat && dbCat.subcategories?.length > 0 ? dbCat.subcategories : staticCat.subcategories,
+      };
+    }),
+    ...categories
+      .filter(
+        (dbCat) =>
+          !CATEGORIES.some(
+            (staticCat) =>
+              staticCat.id === dbCat.slug || staticCat.name.toLowerCase() === dbCat.name.toLowerCase()
+          )
+      )
+      .map((dbCat, idx) => ({
+        id: dbCat.slug || dbCat._id,
+        name: dbCat.name,
+        icon: getCategoryIcon(dbCat.icon),
+        color: ACCENT_COLORS[(CATEGORIES.length + idx) % ACCENT_COLORS.length],
+        count: `${dbCat.jobCount || 0}+`,
+        subcategories: dbCat.subcategories || [],
+      })),
+  ];
 
   const displayedCategories = showAllCategories
     ? activeCategories
@@ -676,6 +698,8 @@ export default function Home() {
                 className={styles.categoryCard}
                 style={{ '--card-color': color } as React.CSSProperties}
                 variants={cardVariants}
+                initial={showAllCategories ? "hidden" : undefined}
+                animate={showAllCategories ? "visible" : undefined}
                 whileHover={{ 
                   y: -6, 
                   scale: 1.015,
