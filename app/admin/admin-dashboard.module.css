@@ -31,7 +31,7 @@
 
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
 }
 
@@ -43,7 +43,9 @@
 .metricCard:nth-child(1) { border-left-color: var(--color-primary); }
 .metricCard:nth-child(2) { border-left-color: #8b5cf6; }
 .metricCard:nth-child(3) { border-left-color: var(--color-warning); }
-.metricCard:nth-child(4) { border-left-color: var(--color-secondary); }
+.metricCard:nth-child(4) { border-left-color: #06b6d4; }
+.metricCard:nth-child(5) { border-left-color: var(--color-secondary); }
+.metricCard:nth-child(6) { border-left-color: #ec4899; }
 
 .metricLayout {
   display: flex;

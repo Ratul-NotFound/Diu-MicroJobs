@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Settings,
   BarChart3,
+  School,
+  Receipt,
 } from 'lucide-react';
 import styles from './AdminSidebar.module.css';
 
@@ -57,8 +59,11 @@ const DEFAULT_SECTIONS: AdminSidebarSection[] = [
     items: [
       { label: 'Users', href: '/admin/users', icon: Users },
       { label: 'Jobs', href: '/admin/jobs', icon: Briefcase },
+      { label: 'Universities', href: '/admin/universities', icon: School },
+      { label: 'Escrow & Gigs', href: '/admin/contracts', icon: Receipt },
       { label: 'Categories', href: '/admin/categories', icon: FolderTree },
       { label: 'Reports', href: '/admin/reports', icon: Flag },
+      { label: 'Admins', href: '/admin/admins', icon: ShieldCheck },
     ],
   },
 ];
@@ -127,7 +132,7 @@ export function AdminSidebar({
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <span className={styles.version}>DIU MicroJobs v0.1.0</span>
+          <span className={styles.version}>Microjobs v0.1.0</span>
         </div>
       </aside>
     </>

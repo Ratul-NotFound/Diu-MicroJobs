@@ -14,6 +14,7 @@
   flex: 1;
   min-width: 0; /* Prevents flex items from overflowing */
   height: 100vh;
+  margin-left: var(--sidebar-width);
 }
 
 /* ─── Admin Header ──────────────────────────────────────────────────────── */
@@ -183,6 +184,10 @@
 /* ─── Responsive Adjustments ────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
+  .mainPanel {
+    margin-left: 0;
+  }
+
   .menuToggle {
     display: block;
   }

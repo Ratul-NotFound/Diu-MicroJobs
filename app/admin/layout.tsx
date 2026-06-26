@@ -1,12 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { ShieldAlert, LogOut, LayoutDashboard, Menu } from 'lucide-react';
+import { 
+  ShieldAlert, 
+  LogOut, 
+  LayoutDashboard, 
+  Menu,
+  Users,
+  Briefcase,
+  FolderTree,
+  Flag,
+  ShieldCheck,
+  School,
+  Receipt
+} from 'lucide-react';
+import { apiClient } from '@/lib/api-client';
 import styles from './admin-layout.module.css';
 
 export default function AdminLayout({
@@ -18,6 +31,37 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Live admin counts states
+  const [pendingJobsCount, setPendingJobsCount] = useState(0);
+  const [pendingReportsCount, setPendingReportsCount] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchCounts = async () => {
+      try {
+        const [jobsRes, reportsRes] = await Promise.all([
+          apiClient<{ pagination: { total: number } }>('/api/admin/jobs?status=pending_review&limit=1'),
+          apiClient<{ pagination: { total: number } }>('/api/admin/reports?status=pending&limit=1'),
+        ]);
+
+        if (jobsRes.data) {
+          setPendingJobsCount(jobsRes.data.pagination.total);
+        }
+        if (reportsRes.data) {
+          setPendingReportsCount(reportsRes.data.pagination.total);
+        }
+      } catch (err) {
+        console.error('Failed to fetch admin sidebar counts:', err);
+      }
+    };
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 15000); // Poll every 15s
+
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   // If loading auth state, show a clean loading view
   if (loading) {
@@ -37,7 +81,7 @@ export default function AdminLayout({
           <ShieldAlert size={48} className={styles.deniedIcon} />
           <h2>Access Denied</h2>
           <p>
-            This area is restricted to Daffodil International University platform administrators. 
+            This area is restricted to Microjobs platform administrators. 
             If you think this is a mistake, please contact support.
           </p>
           <div className={styles.deniedActions}>
@@ -55,10 +99,32 @@ export default function AdminLayout({
     );
   }
 
+  const adminSections = [
+    {
+      title: 'Overview',
+      items: [
+        { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        { label: 'Users', href: '/admin/users', icon: Users },
+        { label: 'Jobs', href: '/admin/jobs', icon: Briefcase, badge: pendingJobsCount },
+        { label: 'Universities', href: '/admin/universities', icon: School },
+        { label: 'Escrow & Gigs', href: '/admin/contracts', icon: Receipt },
+        { label: 'Categories', href: '/admin/categories', icon: FolderTree },
+        { label: 'Reports', href: '/admin/reports', icon: Flag, badge: pendingReportsCount },
+        { label: 'Admins', href: '/admin/admins', icon: ShieldCheck },
+      ],
+    },
+  ];
+
   return (
     <div className={styles.layoutWrapper}>
       {/* Sidebar for Admin */}
       <AdminSidebar
+        sections={adminSections}
         activeHref={pathname}
         isOpen={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}

@@ -44,6 +44,10 @@ interface AnalyticsData {
     totalActiveJobs: number;
     newUsersThisMonth: number;
     jobsThisMonth: number;
+    totalVolume: number;
+    completedVolume: number;
+    escrowedVolume: number;
+    platformEarnings: number;
   };
   usersByRole: {
     student?: number;
@@ -133,7 +137,7 @@ export default function AdminDashboardPage() {
       {/* Title */}
       <div className={styles.header}>
         <div className={styles.titleInfo}>
-          <h1>DIU MicroJobs Command Centre</h1>
+          <h1>Microjobs Command Centre</h1>
           <p>Real-time analytics, user validation control, and platform monitoring statistics.</p>
         </div>
         <div className={styles.headerActions}>
@@ -191,15 +195,39 @@ export default function AdminDashboardPage() {
 
         <Card className={styles.metricCard}>
           <div className={styles.metricLayout}>
+            <div className={`${styles.iconBox}`} style={{ backgroundColor: '#ecfeff', color: '#0891b2', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-lg)', flexShrink: 0 }}>
+              <Shield size={20} />
+            </div>
+            <div className={styles.metricInfo}>
+              <span className={styles.metricLabel}>Escrow Funds</span>
+              <h3 className={styles.metricValue}>৳{data.metrics.escrowedVolume.toLocaleString()}</h3>
+              <span className={styles.metricDelta}>Held for active contracts</span>
+            </div>
+          </div>
+        </Card>
+
+        <Card className={styles.metricCard}>
+          <div className={styles.metricLayout}>
             <div className={`${styles.iconBox} ${styles.completedIcon}`}>
               <Award size={20} />
             </div>
             <div className={styles.metricInfo}>
-              <span className={styles.metricLabel}>Completed Tasks</span>
-              <h3 className={styles.metricValue}>{data.metrics.totalCompletedJobs}</h3>
-              <span className={styles.metricDelta}>
-                {((data.metrics.totalCompletedJobs / (data.metrics.totalJobs || 1)) * 100).toFixed(0)}% finish rate
-              </span>
+              <span className={styles.metricLabel}>Completed Sales</span>
+              <h3 className={styles.metricValue}>৳{data.metrics.completedVolume.toLocaleString()}</h3>
+              <span className={styles.metricDelta}>৳{data.metrics.totalVolume.toLocaleString()} total volume</span>
+            </div>
+          </div>
+        </Card>
+
+        <Card className={styles.metricCard}>
+          <div className={styles.metricLayout}>
+            <div className={`${styles.iconBox}`} style={{ backgroundColor: '#fdf2f8', color: '#db2777', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', borderRadius: 'var(--radius-lg)', flexShrink: 0 }}>
+              <Sparkles size={20} />
+            </div>
+            <div className={styles.metricInfo}>
+              <span className={styles.metricLabel}>Platform Revenue</span>
+              <h3 className={styles.metricValue}>৳{data.metrics.platformEarnings.toLocaleString()}</h3>
+              <span className={styles.metricDelta}>Estimated 10% completed commission</span>
             </div>
           </div>
         </Card>

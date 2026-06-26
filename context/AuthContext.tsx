@@ -136,6 +136,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, [fetchProfile]);
 
+  /** Periodically poll profile state silently (every 30 seconds) */
+  useEffect(() => {
+    if (!firebaseUser) return;
+
+    const interval = setInterval(() => {
+      apiClient<{ user: UserProfile | null; admin: AdminProfile | null }>('/api/auth/me')
+        .then(({ data }) => {
+          if (data) {
+            setUserProfile(data.user);
+            setAdminProfile(data.admin);
+          }
+        })
+        .catch((err) => console.error('Silent profile sync error:', err));
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [firebaseUser]);
+
   /** Email + password login — does NOT navigate; lets the page redirect */
   const login = useCallback(async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);

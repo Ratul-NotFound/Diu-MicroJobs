@@ -1,0 +1,204 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+}
+
+.titleInfo h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.titleInfo p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.contentLayout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.listSection {
+  overflow: hidden;
+}
+
+.formSection {
+  padding: var(--space-5);
+  position: sticky;
+  top: var(--space-6);
+}
+
+.formSection h2 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.adminDetails {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.adminInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.email {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.roleTag {
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.actionsCell {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.toggleBtn {
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.toggleBtn:hover {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+.deactivateBtn {
+  color: var(--color-error) !important;
+  border-color: color-mix(in srgb, var(--color-error) 25%, white) !important;
+}
+
+.deactivateBtn:hover {
+  background-color: var(--color-error-light) !important;
+}
+
+.successBox {
+  margin-top: var(--space-4);
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+  border: 1px solid color-mix(in srgb, var(--color-secondary) 15%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.successBox h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-1);
+}
+
+.successBox p {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-3);
+}
+
+.passwordDisplay {
+  background-color: var(--color-card);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: monospace;
+  font-size: var(--text-sm);
+  font-weight: bold;
+  border: 1px dashed var(--color-secondary);
+  text-align: center;
+  user-select: all;
+  letter-spacing: 0.05em;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 999px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.tableLoading {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-secondary);
+}
+
+.tableEmpty {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 992px) {
+  .contentLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .formSection {
+    position: static;
+  }
+}

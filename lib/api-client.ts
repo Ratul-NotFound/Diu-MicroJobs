@@ -56,9 +56,15 @@ export async function apiClient<T = unknown>(
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
         method,
-        headers: requestHeaders,
+        headers: {
+          ...requestHeaders,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
         body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
+        cache: 'no-store',
       });
       clearTimeout(timeoutId);
 

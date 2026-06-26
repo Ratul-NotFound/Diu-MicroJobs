@@ -33,7 +33,7 @@ export function Footer({ className }: FooterProps) {
         <div className={styles.columns}>
           {/* Column 1: Brand */}
           <div className={styles.brand}>
-            <span className={styles.brandLogo}>MicroJobs</span>
+            <span className={styles.brandLogo}>Microjobs</span>
             <p className={styles.brandDescription}>
               The trusted student freelancing and micro-jobs marketplace.
               Connect with talented students, faculty, and alumni for your next project.
@@ -61,7 +61,7 @@ export function Footer({ className }: FooterProps) {
             </div>
             <div className={styles.contactItem}>
               <Mail size={16} className={styles.contactIcon} />
-              <span>support@campusmicrojobs.com</span>
+              <span>support@microjobs.com</span>
             </div>
             <div className={styles.contactItem}>
               <Phone size={16} className={styles.contactIcon} />
@@ -75,7 +75,7 @@ export function Footer({ className }: FooterProps) {
       <div className={styles.bottom}>
         <div className={`${styles.container} ${styles.bottomContent}`}>
           <span className={styles.copyright}>
-            © 2025 MicroJobs. All rights reserved.
+            © 2025 Microjobs. All rights reserved.
           </span>
         </div>
       </div>

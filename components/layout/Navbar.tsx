@@ -87,7 +87,7 @@ export function Navbar({ user, notificationCount = 0, onLogout, onMenuToggle }: 
       <div className={styles.left}>
         <Link href="/" className={styles.logo}>
           <span className={styles.logoText}>Micro</span>
-          <span className={styles.logoTextAccent}>Jobs</span>
+          <span className={styles.logoTextAccent}>jobs</span>
         </Link>
         <span className={styles.badge}>Beta</span>
       </div>
@@ -288,10 +288,10 @@ export function Navbar({ user, notificationCount = 0, onLogout, onMenuToggle }: 
                 </>
               ) : (
                 <>
-                  <Link href="/login" className={styles.ghostButton} onClick={() => setMobileOpen(false)}>
+                  <Link href="/login" className={styles.mobileGhostBtn} onClick={() => setMobileOpen(false)}>
                     Log In
                   </Link>
-                  <Link href="/register" className={styles.primaryButton} onClick={() => setMobileOpen(false)}>
+                  <Link href="/register" className={styles.mobilePrimaryBtn} onClick={() => setMobileOpen(false)}>
                     Sign Up
                   </Link>
                 </>

@@ -120,7 +120,7 @@ export default function SettingsPage() {
               <Info size={16} />
               <p>
                 To change your registered email, role, or student ID, please submit a support ticket 
-                via email to contact the DIU MicroJobs administration team.
+                via email to contact the Microjobs administration team.
               </p>
             </div>
           </Card>
@@ -209,16 +209,16 @@ export default function SettingsPage() {
             <div className={styles.linksSection}>
               <h3>Helpful Links</h3>
               <a
-                href="https://daffodilvarsity.edu.bd"
+                href={`https://www.${userProfile.email.split('@')[1]}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.sidebarLink}
               >
-                <span>DIU Portal</span>
+                <span>{userProfile.university?.shortName || 'University'} Portal</span>
                 <ExternalLink size={12} />
               </a>
               <a
-                href="mailto:support@diumicrojobs.com"
+                href="mailto:support@microjobs.com"
                 className={styles.sidebarLink}
               >
                 <span>Support Desk</span>

@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import Job from '@/models/Job';
 import Category from '@/models/Category';
+import Contract from '@/models/Contract';
 
 export async function GET(request: Request) {
   try {
@@ -21,6 +22,15 @@ export async function GET(request: Request) {
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
+    // Get jobs within this university for scoping contracts
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let contractFilter: Record<string, any> = {};
+    if (universityFilter) {
+      const jobsInUni = await Job.find({ university: universityFilter }).select('_id').lean();
+      const jobIds = jobsInUni.map((j) => j._id);
+      contractFilter = { job: { $in: jobIds } };
+    }
+
     const [
       totalUsers,
       totalJobs,
@@ -30,6 +40,7 @@ export async function GET(request: Request) {
       jobsThisMonth,
       usersByRole,
       rawCategoryDistribution,
+      financialStats,
     ] = await Promise.all([
       User.countDocuments(uniQuery),
       Job.countDocuments(jobUniQuery),
@@ -44,6 +55,41 @@ export async function GET(request: Request) {
       Job.aggregate([
         { $match: jobUniQuery },
         { $group: { _id: '$category', count: { $sum: 1 } } },
+      ]),
+      Contract.aggregate([
+        { $match: contractFilter },
+        {
+          $group: {
+            _id: null,
+            totalVolume: {
+              $sum: {
+                $cond: [
+                  { $ne: ['$status', 'pending_signatures'] },
+                  '$agreedAmount',
+                  0,
+                ],
+              },
+            },
+            completedVolume: {
+              $sum: {
+                $cond: [
+                  { $eq: ['$status', 'completed'] },
+                  '$agreedAmount',
+                  0,
+                ],
+              },
+            },
+            escrowedVolume: {
+              $sum: {
+                $cond: [
+                  { $eq: ['$status', 'active'] },
+                  '$agreedAmount',
+                  0,
+                ],
+              },
+            },
+          },
+        },
       ]),
     ]);
 
@@ -65,6 +111,11 @@ export async function GET(request: Request) {
       return acc;
     }, {} as Record<string, number>);
 
+    const totalVolume = financialStats[0]?.totalVolume || 0;
+    const completedVolume = financialStats[0]?.completedVolume || 0;
+    const escrowedVolume = financialStats[0]?.escrowedVolume || 0;
+    const platformEarnings = Math.round(completedVolume * 0.10); // 10% platform fee
+
     return NextResponse.json({
       metrics: {
         totalUsers,
@@ -73,6 +124,10 @@ export async function GET(request: Request) {
         totalActiveJobs,
         newUsersThisMonth,
         jobsThisMonth,
+        totalVolume,
+        completedVolume,
+        escrowedVolume,
+        platformEarnings,
       },
       usersByRole: rolesData,
       categoryDistribution,

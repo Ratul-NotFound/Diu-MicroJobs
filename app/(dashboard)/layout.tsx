@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { DashboardLayout } from '@/components/layout';
@@ -16,11 +16,47 @@ import {
   Shield,
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui';
+import { apiClient } from '@/lib/api-client';
 
 export default function AppDashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { firebaseUser, userProfile, adminProfile, loading, profileChecked, logout, isAdmin } = useAuth();
+
+  // Dynamic badge states
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  useEffect(() => {
+    if (!firebaseUser || !userProfile) return;
+
+    const fetchCounts = async () => {
+      try {
+        const [notifRes, convRes] = await Promise.all([
+          apiClient<{ pagination: { total: number } }>('/api/notifications?unreadOnly=true&limit=1'),
+          apiClient<{ conversations: Array<{ unreadCount: Record<string, number> }> }>('/api/messages/conversations'),
+        ]);
+
+        if (notifRes.data) {
+          setUnreadNotifications(notifRes.data.pagination.total);
+        }
+
+        if (convRes.data) {
+          const totalUnreadMsg = convRes.data.conversations.reduce((sum, conv) => {
+            return sum + (conv.unreadCount[userProfile._id] || 0);
+          }, 0);
+          setUnreadMessages(totalUnreadMsg);
+        }
+      } catch (err) {
+        console.error('Failed to sync notification counts:', err);
+      }
+    };
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 15000); // Poll every 15s
+
+    return () => clearInterval(interval);
+  }, [firebaseUser, userProfile]);
 
   useEffect(() => {
     if (!loading && profileChecked) {
@@ -78,7 +114,7 @@ export default function AppDashboardLayout({ children }: { children: React.React
             Account {userProfile.status === 'banned' ? 'Banned' : 'Suspended'}
           </h1>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)' }}>
-            Your access to MicroJobs has been disabled by the administrators.
+            Your access to Microjobs has been disabled by the administrators.
           </p>
           {userProfile.status === 'suspended' && (
             <div style={{
@@ -117,8 +153,8 @@ export default function AppDashboardLayout({ children }: { children: React.React
     { label: 'Browse Jobs', href: '/jobs', icon: Briefcase },
     { label: 'My Proposals', href: '/proposals', icon: FileText },
     { label: 'My Contracts', href: '/contracts', icon: ClipboardCheck },
-    { label: 'Messages', href: '/messages', icon: MessageSquare },
-    { label: 'Notifications', href: '/notifications', icon: Bell },
+    { label: 'Messages', href: '/messages', icon: MessageSquare, badge: unreadMessages },
+    { label: 'Notifications', href: '/notifications', icon: Bell, badge: unreadNotifications },
   ];
 
   const adminItem = isAdmin ? [{ label: 'Admin Panel', href: '/admin', icon: Shield }] : [];
@@ -149,6 +185,7 @@ export default function AppDashboardLayout({ children }: { children: React.React
         photoURL: userProfile.photoURL,
         role: userProfile.role.toUpperCase(),
       }}
+      notificationCount={unreadNotifications}
       sidebarSections={sidebarSections}
       activeHref={pathname}
       onLogout={handleLogout}

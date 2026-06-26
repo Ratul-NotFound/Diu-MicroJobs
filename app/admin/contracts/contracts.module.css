@@ -1,0 +1,267 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.titleInfo h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.titleInfo p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Metrics Cards ─────────────────────────────────────────────────────── */
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.metricCard {
+  padding: var(--space-5);
+  border-left: 4px solid transparent;
+}
+
+.metricCard:nth-child(1) { border-left-color: #0891b2; } /* Escrow - Cyan */
+.metricCard:nth-child(2) { border-left-color: var(--color-secondary); } /* Settled - Green */
+.metricCard:nth-child(3) { border-left-color: var(--color-error); } /* Disputes - Red */
+
+.metricLayout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.iconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.metricInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.metricValue {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin: 2px 0;
+  line-height: 1.1;
+}
+
+.metricDelta {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+/* ─── Filters Card ──────────────────────────────────────────────────────── */
+
+.filtersCard {
+  padding: var(--space-5);
+}
+
+.filtersLayout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 220px;
+}
+
+.selectGroup label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* ─── Table Card ────────────────────────────────────────────────────────── */
+
+.tableCard {
+  overflow: hidden;
+}
+
+.contractInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.jobTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.uniTag {
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.partyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.partyLabel {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: var(--weight-semibold);
+}
+
+.partyName {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.partyEmail {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.actionsCell {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.releaseBtn {
+  color: var(--color-secondary) !important;
+  border-color: color-mix(in srgb, var(--color-secondary) 30%, white) !important;
+}
+
+.releaseBtn:hover {
+  background-color: var(--color-secondary-light) !important;
+}
+
+.refundBtn {
+  color: var(--color-warning) !important;
+  border-color: color-mix(in srgb, var(--color-warning) 30%, white) !important;
+}
+
+.refundBtn:hover {
+  background-color: var(--color-warning-light) !important;
+}
+
+/* Modal details */
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 500px;
+  width: 100%;
+}
+
+.warningBox {
+  display: flex;
+  align-items: start;
+  gap: var(--space-3);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-error) 15%, transparent);
+}
+
+.warningBox h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  margin-bottom: 2px;
+}
+
+.warningBox p {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-4);
+}
+
+.tableLoading {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-secondary);
+}
+
+.tableEmpty {
+  text-align: center;
+  padding: var(--space-12) !important;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 999px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 992px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .actionsCell {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}

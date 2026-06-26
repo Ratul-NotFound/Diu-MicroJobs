@@ -30,17 +30,50 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { firebaseUid, email, displayName, role, permissions } = body;
 
-    if (!firebaseUid || !email || !displayName || !role) {
-      return NextResponse.json({ error: 'Firebase UID, email, display name, and role are required' }, { status: 400 });
+    if (!email || !displayName || !role) {
+      return NextResponse.json({ error: 'Email, display name, and role are required' }, { status: 400 });
     }
 
-    const existing = await Admin.findOne({ $or: [{ firebaseUid }, { email }] });
+    // Connect to database and check if admin doc already exists for this email
+    const existing = await Admin.findOne({ email });
     if (existing) {
-      return NextResponse.json({ error: 'Admin with this UID or email already exists' }, { status: 400 });
+      return NextResponse.json({ error: 'Admin with this email already exists' }, { status: 400 });
+    }
+
+    let uid = firebaseUid;
+    let tempPassword = '';
+    
+    if (!uid) {
+      // Lazy import firebase-admin auth helper
+      const { adminAuth } = await import('@/lib/firebase-admin');
+      try {
+        const userRecord = await adminAuth.getUserByEmail(email);
+        uid = userRecord.uid;
+      } catch (err: any) {
+        if (err.code === 'auth/user-not-found') {
+          // Generate a safe temporary password
+          tempPassword = Math.random().toString(36).slice(-8) + '!' + Math.floor(Math.random() * 10) + 'A';
+          const userRecord = await adminAuth.createUser({
+            email,
+            displayName,
+            password: tempPassword,
+            emailVerified: true,
+          });
+          uid = userRecord.uid;
+        } else {
+          throw err;
+        }
+      }
+    }
+
+    // Now check if this firebaseUid already exists in the Admin collection
+    const existingUid = await Admin.findOne({ firebaseUid: uid });
+    if (existingUid) {
+      return NextResponse.json({ error: 'Admin with this Firebase UID already exists' }, { status: 400 });
     }
 
     const newAdmin = await Admin.create({
-      firebaseUid,
+      firebaseUid: uid,
       email,
       displayName,
       role,
@@ -49,7 +82,10 @@ export async function POST(request: Request) {
       status: 'active',
     });
 
-    return NextResponse.json({ admin: newAdmin }, { status: 201 });
+    return NextResponse.json({ 
+      admin: newAdmin, 
+      tempPassword: tempPassword || null 
+    }, { status: 201 });
   } catch (error) {
     console.error('Create admin error:', error);
     const message = error instanceof Error ? error.message : 'Internal server error';

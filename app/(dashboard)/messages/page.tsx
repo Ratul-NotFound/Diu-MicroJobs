@@ -55,9 +55,9 @@ export default function MessagesPage() {
   // Poll for new messages every 5 seconds
   const pollInterval = useRef<NodeJS.Timeout | null>(null);
 
-  const loadConversations = useCallback(async (selectId?: string) => {
+  const loadConversations = useCallback(async (selectId?: string, silent = false) => {
     try {
-      setLoadingConv(true);
+      if (!silent) setLoadingConv(true);
       const res = await apiClient<{ conversations: ConversationItem[] }>('/api/messages/conversations');
       if (res.data) {
         const convs = res.data.conversations;
@@ -73,7 +73,7 @@ export default function MessagesPage() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoadingConv(false);
+      if (!silent) setLoadingConv(false);
     }
   }, [activeConversation]);
 
@@ -90,6 +90,13 @@ export default function MessagesPage() {
 
   useEffect(() => {
     loadConversations();
+
+    // Silently poll conversation list every 10 seconds for new incoming messages
+    const rosterInterval = setInterval(() => {
+      loadConversations(undefined, true);
+    }, 10000);
+
+    return () => clearInterval(rosterInterval);
   }, [loadConversations]);
 
   useEffect(() => {

@@ -42,8 +42,8 @@
   --gradient-dark: linear-gradient(135deg, #0a1628 0%, #0f1f3d 100%);
 
   /* === Surfaces === */
-  --color-bg: #f8f8f8;
-  --color-bg-alt: #f3f4f6;
+  --color-bg: #fafafa;
+  --color-bg-alt: #f4f4f5;
   --color-card: #ffffff;
   --color-card-hover: #fdfdfd;
   --color-sidebar: #ffffff;
@@ -56,16 +56,16 @@
   --glass-blur: blur(20px);
 
   /* === Text === */
-  --color-text: #1a1a2e;
-  --color-text-secondary: #4b5563;
-  --color-text-muted: #6b7280;
+  --color-text: #09090b;
+  --color-text-secondary: #52525b;
+  --color-text-muted: #71717a;
   --color-text-light: #9ca3af;
   --color-text-inverse: #ffffff;
   --color-text-on-dark: rgba(255,255,255,0.9);
 
   /* === Borders === */
-  --color-border: #e5e7eb;
-  --color-border-light: #f3f4f6;
+  --color-border: #e4e4e7;
+  --color-border-light: #f4f4f5;
   --color-border-strong: #d1d5db;
   --color-border-focus: #1dc071;
 
@@ -136,8 +136,8 @@
   --shadow-lg:  0 8px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
   --shadow-xl:  0 20px 40px rgba(0,0,0,0.10), 0 8px 16px rgba(0,0,0,0.05);
   --shadow-2xl: 0 32px 64px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.06);
-  --shadow-green: 0 4px 20px rgba(29,192,113,0.25);
-  --shadow-green-lg: 0 8px 32px rgba(29,192,113,0.30);
+  --shadow-green: 0 4px 12px rgba(0,0,0,0.03); /* Soft, non-colored shadow */
+  --shadow-green-lg: 0 8px 24px rgba(0,0,0,0.05); /* Soft, non-colored shadow */
 
   /* === Transitions === */
   --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -180,11 +180,11 @@
   --gradient-dark: linear-gradient(135deg, #020510 0%, #050d1e 100%);
 
   /* Surfaces */
-  --color-bg: #060e1d;
-  --color-bg-alt: #0a1428;
-  --color-card: #0f1e33;
-  --color-card-hover: #132137;
-  --color-sidebar: #080f1d;
+  --color-bg: #09090b;
+  --color-bg-alt: #18181b;
+  --color-card: #18181b;
+  --color-card-hover: #27272a;
+  --color-sidebar: #09090b;
   --color-nav: rgba(6, 14, 29, 0.95);
 
   /* Glassmorphism */
@@ -405,3 +405,24 @@ table { border-collapse: collapse; width: 100%; }
    Laptop:  max 1024px
    Desktop: min 1025px
    ========================================================================== */
+
+/* ==========================================================================
+   Typography Polish (Vercel/Linear Aesthetic)
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Make sure links and buttons have crisp text */
+a, button {
+  letter-spacing: -0.01em;
+}

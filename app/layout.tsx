@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast';
 
 export const metadata: Metadata = {
-  title: 'MicroJobs — Student Freelancing Platform',
+  title: 'Microjobs — Student Freelancing Platform',
   description: 'A dedicated freelancing and micro-jobs marketplace for students, faculty, and departments at registered universities.',
   manifest: '/manifest.json',
   icons: {
