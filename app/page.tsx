@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -136,22 +136,22 @@ const titleWordVariants: Variants = {
 /* ─── Static Data ────────────────────────────────────────────────────────── */
 
 const CATEGORIES = [
-  { id: 'web-app-dev',             name: 'Web & App Dev',            icon: Laptop,       color: '#3b82f6', count: '120+', subcategories: ['Portfolio Website Making', 'Landing Page Design', 'React / Next.js Development'] },
-  { id: 'design',                  name: 'Design',                   icon: Palette,      color: '#ec4899', count: '85+', subcategories: ['Logo Design', 'Poster Design', 'UI/UX Design (Figma)'] },
-  { id: 'photography',             name: 'Photography',              icon: Camera,       color: '#10b981', count: '60+', subcategories: ['Event Photography', 'Portrait Photography', 'Photo Editing & Retouching'] },
-  { id: 'videography',             name: 'Videography',              icon: Video,        color: '#f97316', count: '40+', subcategories: ['Video Editing', 'Short-Form Content', 'Animation'] },
-  { id: 'slides-docs',             name: 'Slides & Docs',            icon: FileText,     color: '#f59e0b', count: '94+', subcategories: ['PowerPoint Presentation', 'Google Slides', 'Pitch Deck Design'] },
-  { id: 'research',                name: 'Research',                 icon: Search,       color: '#8b5cf6', count: '47+', subcategories: ['Literature Review', 'Survey Design', 'Data Collection'] },
-  { id: 'tutoring',                name: 'Tutoring',                 icon: GraduationCap,color: '#06b6d4', count: '33+', subcategories: ['Math Tutoring', 'Programming Help', 'Physics Tutoring'] },
-  { id: 'drawing-drafting',        name: 'Drawing & Drafting',       icon: PenTool,      color: '#14b8a6', count: '28+', subcategories: ['Architectural Drawing', 'AutoCAD Drafting', 'Floor Plan Design'] },
-  { id: 'project-making',          name: 'Project Making',           icon: Cpu,          color: '#a855f7', count: '35+', subcategories: ['IoT Project', 'Arduino Project', 'DLD / Digital Circuit'] },
-  { id: 'thesis-academic-writing', name: 'Thesis & Academic Writing',icon: BookOpen,     color: '#0ea5e9', count: '52+', subcategories: ['Thesis Writing Assistance', 'Research Paper Writing', 'Assignment Writing'] },
-  { id: 'assignment-lab-help',     name: 'Assignment & Lab Help',    icon: ClipboardList,color: '#84cc16', count: '44+', subcategories: ['Programming Assignment Help', 'Math Assignments', 'Lab Report Help'] },
-  { id: 'career-resume-prep',      name: 'Career & Resume Prep',     icon: Briefcase,    color: '#f43f5e', count: '38+', subcategories: ['CV Making', 'Resume Making', 'LinkedIn Profile Optimization'] },
-  { id: 'content-writing',         name: 'Content Writing',          icon: Edit,         color: '#fb923c', count: '29+', subcategories: ['Blog / Article Writing', 'Social Media Content', 'Copywriting'] },
-  { id: 'event-campus-support',    name: 'Event & Campus Support',   icon: Calendar,     color: '#22d3ee', count: '21+', subcategories: ['Event Host / MC', 'Event Planning', 'Live Streaming Setup'] },
-  { id: 'campus-errands-delivery', name: 'Campus Errands & Delivery',icon: Truck,        color: '#4ade80', count: '18+', subcategories: ['Document Printing', 'Campus Food Delivery', 'Library Book Pickup'] },
-  { id: 'tech-digital-services',   name: 'Tech & Digital Services',  icon: Settings,     color: '#818cf8', count: '45+', subcategories: ['Laptop Setup', 'OS Installation', 'AI Automation'] },
+  { id: 'web-app-dev',             name: 'Web & App Dev',            icon: Laptop,       color: '#3b82f6', count: '0+', bgImage: '/images/gig_web.png', subcategories: ['Portfolio Website Making', 'Landing Page Design', 'Full-Stack Web App', 'React / Next.js Development'] },
+  { id: 'design',                  name: 'Design',                   icon: Palette,      color: '#ec4899', count: '1+', bgImage: '/images/gig_design.png', subcategories: ['Logo Design', 'Poster Design', 'Banner / Social Media Graphics', 'Flyer & Brochure Design'] },
+  { id: 'photography',             name: 'Photography',              icon: Camera,       color: '#10b981', count: '0+', bgImage: '/images/gig_photo.png', subcategories: ['Event Photography', 'Portrait Photography', 'Product Photography', 'Photo Editing & Retouching'] },
+  { id: 'videography',             name: 'Videography',              icon: Video,        color: '#f97316', count: '0+', bgImage: '/images/gig_video.png', subcategories: ['Videography (Event)', 'Video Editing', 'Short-Form Content (Reels/TikTok)', 'YouTube Video Editing'] },
+  { id: 'slides-docs',             name: 'Slides & Docs',            icon: Briefcase,     color: '#f59e0b', count: '1+', bgImage: '/images/gig_slides.png', subcategories: ['PowerPoint Presentation', 'Google Slides', 'Pitch Deck Design', 'Lab Report Writing'] },
+  { id: 'research',                name: 'Research',                 icon: Search,       color: '#8b5cf6', count: '0+', bgImage: '/images/gig_research.png', subcategories: ['Literature Review', 'Survey Design & Analysis', 'Data Collection', 'Statistical Analysis (SPSS / R)'] },
+  { id: 'tutoring',                name: 'Tutoring',                 icon: GraduationCap,color: '#06b6d4', count: '0+', bgImage: '/images/gig_tutoring.png', subcategories: ['Math Tutoring', 'Programming Help', 'Physics / Chemistry Tutoring', 'English Language Coaching'] },
+  { id: 'drawing-drafting',        name: 'Drawing & Drafting',       icon: PenTool,      color: '#14b8a6', count: '0+', bgImage: '/images/gig_drafting.png', subcategories: ['Architectural Drawing', 'AutoCAD Drafting', 'Floor Plan Design', '3D Modeling (SketchUp / Blender)'] },
+  { id: 'project-making',          name: 'Project Making',           icon: Cpu,          color: '#a855f7', count: '0+', bgImage: '/images/gig_project.png', subcategories: ['IoT Project', 'Arduino / Raspberry Pi Project', 'DLD / Digital Circuit Project', 'Microcontroller Programming'] },
+  { id: 'thesis-academic-writing', name: 'Thesis & Academic Writing',icon: BookOpen,     color: '#0ea5e9', count: '0+', bgImage: '/images/gig_thesis.png', subcategories: ['Thesis Writing Assistance', 'Research Paper Writing', 'Assignment Writing', 'Report Writing'] },
+  { id: 'assignment-lab-help',     name: 'Assignment & Lab Help',    icon: ClipboardList,color: '#84cc16', count: '0+', bgImage: '/images/gig_assignment.png', subcategories: ['Programming Assignment Help', 'Math / Statistics Assignments', 'Lab Report Help', 'Simulation Lab Work'] },
+  { id: 'career-resume-prep',      name: 'Career & Resume Prep',     icon: Briefcase,    color: '#f43f5e', count: '0+', bgImage: '/images/gig_career.png', subcategories: ['CV Making', 'Resume Making', 'LinkedIn Profile Optimization', 'Cover Letter Writing'] },
+  { id: 'content-writing',         name: 'Content Writing',          icon: Edit,         color: '#fb923c', count: '0+', bgImage: '/images/gig_writing.png', subcategories: ['Blog / Article Writing', 'Social Media Content', 'Copywriting', 'SEO Content Writing'] },
+  { id: 'event-campus-support',    name: 'Event & Campus Support',   icon: Calendar,     color: '#22d3ee', count: '0+', bgImage: '/images/gig_event.png', subcategories: ['Event Host / MC', 'Event Planning', 'Live Streaming Setup', 'Stage Management'] },
+  { id: 'campus-errands-delivery', name: 'Campus Errands & Delivery',icon: Truck,        color: '#4ade80', count: '0+', bgImage: '/images/gig_delivery.png', subcategories: ['Document Printing', 'Campus Food Delivery', 'Library Book Pickup', 'On-Campus Courier'] },
+  { id: 'tech-digital-services',   name: 'Tech & Digital Services',  icon: Settings,     color: '#818cf8', count: '0+', bgImage: '/images/gig_tech.png', subcategories: ['Laptop Setup', 'OS Installation', 'AI Automation', 'Data Backup & Recovery'] },
 ];
 
 const STATS = [
@@ -342,12 +342,34 @@ const FAQS = [
 
 
 
+const HERO_IMAGES = [
+  '/images/diu_campus_bg.jpg',
+  '/images/gig_web.png',
+  '/images/gig_design.png',
+  '/images/gig_photo.png',
+  '/images/gig_video.png',
+  '/images/gig_slides.png',
+  '/images/gig_drafting.png',
+  '/images/gig_tutoring.png',
+  '/images/gig_research.png',
+  '/images/gig_assignment.png',
+];
+
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
 export default function Home() {
   const router = useRouter();
   const { firebaseUser, userProfile, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [heroImageIdx, setHeroImageIdx] = useState(0);
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroImageIdx((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 7000); // Cycle every 7 seconds
+    return () => clearInterval(timer);
+  }, []);
+
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -444,6 +466,7 @@ export default function Home() {
         color: staticCat.color || ACCENT_COLORS[idx % ACCENT_COLORS.length],
         count: dbCat ? `${dbCat.jobCount || 0}+` : staticCat.count,
         subcategories: dbCat && dbCat.subcategories?.length > 0 ? dbCat.subcategories : staticCat.subcategories,
+        bgImage: staticCat.bgImage,
       };
     }),
     ...categories
@@ -461,6 +484,7 @@ export default function Home() {
         color: ACCENT_COLORS[(CATEGORIES.length + idx) % ACCENT_COLORS.length],
         count: `${dbCat.jobCount || 0}+`,
         subcategories: dbCat.subcategories || [],
+        bgImage: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60',
       })),
   ];
 
@@ -480,8 +504,66 @@ export default function Home() {
 
       {/* ─── HERO ────────────────────────────────────────────────────────── */}
       <section className={styles.hero} aria-label="Hero">
-        <div className={styles.heroBgImage} />
+        {/* Cinematic cycling background images */}
+        <div className={styles.heroBgSlideshow}>
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={heroImageIdx}
+              className={styles.heroSlideImage}
+              style={{ backgroundImage: `url(${HERO_IMAGES[heroImageIdx]})` }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.08 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.8, ease: "easeInOut" }}
+            />
+          </AnimatePresence>
+        </div>
+
         <div className={styles.heroBgOverlay} />
+
+        {/* Living, floating ambient glowing blobs */}
+        <div className={styles.heroGlowContainer}>
+          <motion.div 
+            className={`${styles.glowBlob} ${styles.glowGreen}`}
+            animate={{
+              x: [0, 45, -25, 0],
+              y: [0, -60, 40, 0],
+              scale: [1, 1.15, 0.9, 1]
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className={`${styles.glowBlob} ${styles.glowBlue}`}
+            animate={{
+              x: [0, -50, 35, 0],
+              y: [0, 50, -45, 0],
+              scale: [1, 0.85, 1.15, 1]
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div 
+            className={`${styles.glowBlob} ${styles.glowCyan}`}
+            animate={{
+              x: [0, 30, -35, 0],
+              y: [0, 35, 55, 0],
+              scale: [1, 1.1, 0.95, 1]
+            }}
+            transition={{
+              duration: 18,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
+
         <div className={styles.container}>
           <motion.div 
             className={styles.heroCentered}
@@ -612,62 +694,78 @@ export default function Home() {
             <p>Collaborate with verified students and faculty across leading universities in Bangladesh.</p>
           </div>
 
-          <div className={styles.uniMarquee}>
-            <div className={styles.uniMarqueeTrack}>
-              {[...Array(2)].map((_, groupIdx) => (
-                <div key={`group-${groupIdx}`} className={styles.uniMarqueeGroup}>
-                  {(showcaseUniversities.length > 0 ? showcaseUniversities : SHOWCASE_UNIVERSITIES).map((uni, idx) => {
-                    const domainsStr = Array.isArray(uni.domains) ? uni.domains[0] : uni.domains;
-                    const colorDisplay = uni.color || ACCENT_COLORS[idx % ACCENT_COLORS.length];
+          <div className={styles.uniGrid}>
+            {(showcaseUniversities.length > 0 ? showcaseUniversities : SHOWCASE_UNIVERSITIES).map((uni, idx) => {
+              const domainsStr = Array.isArray(uni.domains) ? uni.domains[0] : uni.domains;
+              const colorDisplay = uni.color || ACCENT_COLORS[idx % ACCENT_COLORS.length];
 
-                    // Compute initials from shortName or full name fallback
-                    const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3);
-                    const initialsFontSize = initials.length > 3 ? '9px' : '11px';
+              // Compute initials from shortName or full name fallback
+              const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3);
+              const initialsFontSize = initials.length > 3 ? '10px' : '12px';
 
-                    const logoDisplay = uni.logo ? (
-                      <img src={uni.logo} alt={uni.shortName} className={styles.uniLogoImage} />
-                    ) : (
-                      <div 
-                        className={styles.uniLogoInitials} 
-                        style={{ 
-                          background: `linear-gradient(135deg, ${colorDisplay}, ${colorDisplay}cc)`,
-                          fontSize: initialsFontSize
-                        }}
-                      >
-                        {initials}
-                      </div>
-                    );
-
-                    return (
-                      <motion.div 
-                        key={uni.shortName || uni._id} 
-                        className={styles.uniPill}
-                        style={{ 
-                          '--uni-color': colorDisplay,
-                          '--uni-color-light': `${colorDisplay}10`,
-                          '--uni-color-border': `${colorDisplay}25`
-                        } as React.CSSProperties}
-                        variants={cardVariants}
-                        whileHover={{ 
-                          y: -4, 
-                          scale: 1.02,
-                          transition: { type: "spring", stiffness: 300, damping: 20 }
-                        }}
-                        whileTap={{ scale: 0.985 }}
-                      >
-                        <div className={styles.uniLogoBox}>
-                          {logoDisplay}
-                        </div>
-                        <div className={styles.uniIdentity}>
-                          <h4 title={uni.name}>{uni.shortName || uni.name}</h4>
-                          <span className={styles.uniDomain}>@{domainsStr}</span>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+              const logoDisplay = uni.logo ? (
+                <img src={uni.logo} alt={uni.shortName} className={styles.uniLogoImage} />
+              ) : (
+                <div 
+                  className={styles.uniLogoInitials} 
+                  style={{ 
+                    backgroundColor: colorDisplay,
+                    fontSize: initialsFontSize
+                  }}
+                >
+                  {initials}
                 </div>
-              ))}
-            </div>
+              );
+
+              const studentsCount = uni.students || (uni.userCount !== undefined ? `${uni.userCount}` : '0');
+              const gigsCount = uni.gigs || (uni.jobCount !== undefined ? `${uni.jobCount}` : '0');
+
+              return (
+                <motion.div 
+                  key={uni.shortName || uni._id} 
+                  className={styles.uniCard}
+                  style={{ 
+                    '--uni-color': colorDisplay,
+                    '--uni-color-light': `${colorDisplay}0a`,
+                    '--uni-color-border': `${colorDisplay}25`
+                  } as React.CSSProperties}
+                  variants={cardVariants}
+                  whileHover={{ 
+                    y: -6, 
+                    transition: { type: "spring", stiffness: 300, damping: 20 }
+                  }}
+                  whileTap={{ scale: 0.985 }}
+                >
+                  <div className={styles.uniCardHeader}>
+                    <div className={styles.uniLogoBox}>
+                      {logoDisplay}
+                    </div>
+                    <div className={styles.uniVerifiedBadge}>
+                      <ShieldCheck size={13} className={styles.uniVerifiedIcon} />
+                      <span>@{domainsStr}</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.uniCardBody}>
+                    <h3 className={styles.uniCardTitle}>{uni.name}</h3>
+                    <span className={styles.uniCardShortName}>{uni.shortName || uni.name}</span>
+                  </div>
+
+                  <div className={styles.uniCardDivider} />
+
+                  <div className={styles.uniCardStats}>
+                    <div className={styles.uniStatItem}>
+                      <span className={styles.uniStatLabel}>Active Students</span>
+                      <span className={styles.uniStatValue}>{studentsCount}</span>
+                    </div>
+                    <div className={styles.uniStatItem}>
+                      <span className={styles.uniStatLabel}>Gigs Completed</span>
+                      <span className={styles.uniStatValue}>{gigsCount}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </motion.section>
@@ -692,7 +790,7 @@ export default function Home() {
           </div>
 
           <div className={styles.categoryGrid}>
-            {displayedCategories.map(({ id, name, icon: Icon, color, count, subcategories }, idx) => (
+            {displayedCategories.map(({ id, name, icon: Icon, color, count, subcategories, bgImage }, idx) => (
               <motion.div
                 key={id}
                 className={styles.categoryCard}
@@ -711,6 +809,10 @@ export default function Home() {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') router.push(`/jobs?category=${id}`); }}
               >
+                <div 
+                  className={styles.cardImageBg} 
+                  style={{ backgroundImage: `url(${bgImage})` }} 
+                />
                 <div className={styles.catHeader}>
                   <div className={styles.catIconWrap}>
                     <Icon size={18} />
@@ -720,19 +822,27 @@ export default function Home() {
                 
                 {subcategories && subcategories.length > 0 && (
                   <div className={styles.catSubList}>
-                    {subcategories.slice(0, 4).map((sub: string) => (
-                      <span
-                        key={sub}
-                        className={styles.catSubItem}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/jobs?category=${id}&subcategory=${encodeURIComponent(sub)}`);
-                        }}
-                      >
-                        <ChevronRight size={12} className={styles.catSubChevron} />
-                        {sub}
-                      </span>
-                    ))}
+                    {subcategories.slice(0, 4).map((sub: string) => {
+                      const isHighlighted = sub === 'React / Next.js Development';
+                      return (
+                        <span
+                          key={sub}
+                          className={styles.catSubItem}
+                          style={isHighlighted ? { color: color } : {}}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/jobs?category=${id}&subcategory=${encodeURIComponent(sub)}`);
+                          }}
+                        >
+                          <ChevronRight 
+                            size={12} 
+                            className={styles.catSubChevron} 
+                            style={isHighlighted ? { color: color } : {}}
+                          />
+                          {sub}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
                 
