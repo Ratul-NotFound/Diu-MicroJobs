@@ -579,19 +579,62 @@
   flex-direction: column;
   padding: var(--space-8);
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-xl);
+  border-radius: 24px;
   background: var(--color-card);
   position: relative;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+  overflow: hidden; /* To prevent decorative elements from leaking out */
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
+/* Subtle dot grid overlay inside the cards */
+.howCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(16, 185, 129, 0.04) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
 
+/* Top-Right Glowing Blob */
+.howCard::after {
+  content: '';
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.howCard:hover {
+  border-color: rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 16px 36px rgba(16, 185, 129, 0.05) !important;
+}
+
+.howCard:hover::before {
+  opacity: 1;
+}
+
+.howCard:hover::after {
+  transform: scale(1.3);
+  opacity: 0.9;
+}
 
 .howStepNum {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: #fff;
   display: flex;
   align-items: center;
@@ -600,12 +643,16 @@
   font-size: var(--text-lg);
   margin-bottom: var(--space-5);
   box-shadow: var(--shadow-green);
+  position: relative;
+  z-index: 2;
 }
 
 .howCard h4 {
   font-size: var(--text-xl);
   color: var(--color-text);
   margin-bottom: var(--space-3);
+  position: relative;
+  z-index: 2;
 }
 
 .howCard p {
@@ -613,6 +660,28 @@
   color: var(--color-text-muted);
   line-height: var(--leading-relaxed);
   flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.howGhostNumber {
+  position: absolute;
+  bottom: -35px;
+  right: 5px;
+  font-size: 150px;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(16, 185, 129, 0.06);
+  pointer-events: none;
+  line-height: 1;
+  font-family: var(--font-heading);
+  z-index: 0;
+  transition: all 0.3s ease;
+}
+
+.howCard:hover .howGhostNumber {
+  -webkit-text-stroke-color: rgba(16, 185, 129, 0.15);
+  transform: translateY(-8px) scale(1.05);
 }
 
 .howConnector {
@@ -1353,55 +1422,221 @@
   padding: var(--space-20) 0;
   background-color: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
-}
-
-.uniGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-6);
-  margin-top: var(--space-8);
-}
-
-.uniCard {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
   position: relative;
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  overflow: hidden;
 }
 
-.uniCard:hover {
-  border-color: var(--uni-color) !important;
-  box-shadow: 0 12px 30px var(--uni-color-light), 0 0 0 1px var(--uni-color-border) !important;
+.uniShowcaseMesh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(var(--color-border-light) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
+  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
+  opacity: 0.35;
+  pointer-events: none;
 }
 
-.uniCardHeader {
+.uniLiveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-left: 6px;
+}
+
+.uniPulseDot {
+  width: 5px;
+  height: 5px;
+  background-color: #10b981;
+  border-radius: 50%;
+  animation: pulseDot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+.uniHubsScrollWrapper {
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+}
+
+.uniHubsScrollRow {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: var(--space-6) 6px var(--space-8) 6px;
+  margin-top: var(--space-4);
+  scrollbar-width: none; /* Hide default scrollbar on Firefox */
+  scroll-snap-type: x mandatory;
   width: 100%;
 }
 
+.uniHubsScrollRow::-webkit-scrollbar {
+  display: none; /* Hide default scrollbar on Chrome/Safari/Edge */
+}
+
+.scrollArrowLeft,
+.scrollArrowRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.scrollArrowLeft svg,
+.scrollArrowRight svg {
+  transition: transform 0.2s ease;
+}
+
+.scrollArrowLeft:hover,
+.scrollArrowRight:hover {
+  color: var(--color-text);
+}
+
+.scrollArrowLeft:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.scrollArrowLeft:hover svg {
+  transform: translateX(-4px); /* Slide left slightly on hover */
+}
+
+.scrollArrowRight:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
+.scrollArrowRight:hover svg {
+  transform: translateX(4px); /* Slide right slightly on hover */
+}
+
+.scrollArrowLeft:active,
+.scrollArrowRight:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.scrollArrowLeft {
+  left: -48px;
+}
+
+.scrollArrowRight {
+  right: -48px;
+}
+
+@media (max-width: 1024px) {
+  .scrollArrowLeft,
+  .scrollArrowRight {
+    display: none;
+  }
+}
+
+.uniPill {
+  position: relative;
+  flex: 0 0 320px;
+  scroll-snap-align: start;
+  background: var(--color-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  padding: var(--space-6) var(--space-5) var(--space-5) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  overflow: visible; /* To allow the logo and glow to float out */
+}
+
+/* Background colored glow reflection */
+.uniPill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 0%, var(--uni-color) 0%, transparent 70%);
+  opacity: 0.03;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+/* Glowing aura behind the card on hover */
+.uniPill::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: var(--uni-color);
+  filter: blur(25px);
+  opacity: 0;
+  z-index: -1;
+  border-radius: 20px;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.uniPill:hover {
+  border-color: var(--uni-color) !important;
+  transform: translateY(-8px);
+}
+
+.uniPill:hover::after {
+  opacity: 0.12; /* Subtle colored glow matching university color behind the card */
+  transform: scale(1.05);
+}
+
+.uniPill:hover::before {
+  opacity: 0.08;
+}
+
+/* Floating Logo Bubble */
 .uniLogoBox {
+  position: absolute;
+  top: -16px;
+  left: 20px;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background-color: var(--color-bg-alt);
-  border: 1px solid var(--color-border-light);
+  border-radius: 12px; /* Premium rounded square shape for logo bubble */
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08), 0 0 0 2px var(--uni-color-border);
+  z-index: 3;
   transition: transform var(--transition-normal);
 }
 
-.uniCard:hover .uniLogoBox {
-  transform: scale(1.08);
+.uniPill:hover .uniLogoBox {
+  transform: translateY(-4px) scale(1.05) rotate(-3deg); /* Micro-interaction rotation! */
 }
 
 .uniLogoInitials {
@@ -1410,7 +1645,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--uni-color);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1419,85 +1654,218 @@
 .uniLogoImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Scale and fit logo images properly inside circular frames */
+  padding: 4px;
+  background-color: var(--color-card);
 }
 
-.uniVerifiedBadge {
-  display: inline-flex;
+.uniIdentity {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  margin-top: 16px;
+}
+
+.uniNameRow {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  background-color: rgba(16, 185, 129, 0.05);
-  border: 1px solid rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 11px;
-  font-weight: 500;
-  font-family: var(--font-mono);
+  gap: 6px;
+}
+
+.uniShortName {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.3px;
 }
 
 .uniVerifiedIcon {
   color: #10b981;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.15));
 }
 
-.uniCardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-grow: 1;
-}
-
-.uniCardTitle {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text);
-  line-height: 1.4;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: 44px;
-}
-
-.uniCardShortName {
+.uniFullName {
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
 }
 
-.uniCardDivider {
+.uniHeaderDomain {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  padding: 3px 8px;
+  border-radius: 20px; /* Capsule pill for domain */
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.uniDomainText {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.uniHubDivider {
   height: 1px;
-  background-color: var(--color-border-light);
+  background: linear-gradient(90deg, var(--color-border-light) 0%, transparent 100%);
   width: 100%;
 }
 
-.uniCardStats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+/* Redesigned Stat Blocks */
+.uniHubStatsRow {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  gap: 12px;
 }
 
-.uniStatItem {
+.uniHubStatCol {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.uniStatLabel {
-  font-size: 11px;
+.uniPill:hover .uniHubStatCol {
+  background-color: var(--color-card);
+  border-color: var(--uni-color-border);
+}
+
+.uniHubStatLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   color: var(--color-text-muted);
-  font-weight: 400;
+  font-weight: 600;
+}
+
+.uniAvatarStack {
+  display: flex;
+  align-items: center;
+}
+
+.uniAvatarCircle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--color-bg-alt);
+  border: 2px solid var(--color-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-left: -6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform var(--transition-fast);
+}
+
+.uniAvatarCircle:first-child {
+  margin-left: 0;
+}
+
+/* Slide out avatars stack on hover! */
+.uniPill:hover .uniAvatarCircle:nth-child(2) {
+  transform: translateX(-2px);
+}
+.uniPill:hover .uniAvatarCircle:nth-child(3) {
+  transform: translateX(-4px);
+}
+
+.uniAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.uniAvatarCount {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  margin-left: 6px;
 }
 
 .uniStatValue {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-text);
-  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Add gig completion check icon */
+.uniStatValue::before {
+  content: '✓';
+  color: #10b981;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.uniHubFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.uniSpecTag {
+  font-size: 10px;
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.uniPill:hover .uniSpecTag {
+  background-color: var(--color-card);
+  border-color: var(--uni-color-border);
+  color: var(--color-text);
+}
+
+.uniSpecTag:hover {
+  background-color: var(--uni-color) !important;
+  border-color: var(--uni-color) !important;
+  color: #ffffff !important;
+  transform: scale(1.05);
+}
+
+.uniShowcaseFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+}
+
+.uniLiveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-bg-alt);
+  border: 1px solid var(--color-border-light);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
 }
 
 /* ==========================================================================
@@ -1560,6 +1928,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
+  position: relative;
+  z-index: 2;
 }
 
 .howIconBox {
@@ -1597,7 +1967,6 @@
   .howGrid { grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
   .howConnector { display: none; }
   .featuresGrid { grid-template-columns: repeat(2, 1fr); }
-  .uniGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 900px) {
@@ -1695,25 +2064,47 @@
     margin-bottom: var(--space-2) !important;
   }
 
-  /* Responsive Showcase Grid for Mobile */
-  .uniGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin-top: var(--space-6);
+  /* Campus Talent Hub Catalog for Mobile */
+  .uniHubsScrollRow {
+    gap: 12px;
+    padding: var(--space-4) 4px var(--space-6) 4px;
+    margin-top: var(--space-2);
   }
-  .uniCard {
+  .uniPill {
+    flex: 0 0 260px;
     padding: var(--space-4);
-  }
-  .uniCardTitle {
-    height: auto;
-    font-size: 15px;
+    gap: 12px;
   }
   .uniLogoBox {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
+  }
+  .uniShortName {
+    font-size: 13px;
+  }
+  .uniFullName {
+    font-size: 10px;
+    max-width: 110px;
+  }
+  .uniHeaderDomain {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+  .uniAvatarCircle {
+    width: 20px;
+    height: 20px;
+    font-size: 7px;
   }
   .uniStatValue {
-    font-size: 16px;
+    font-size: 13px;
+  }
+  .uniSpecTag {
+    font-size: 9px;
+    padding: 1px 6px;
+  }
+  .uniLiveIndicator {
+    font-size: 11px;
+    padding: 4px 12px;
   }
 
   /* Swipeable Categories Layout on Mobile */

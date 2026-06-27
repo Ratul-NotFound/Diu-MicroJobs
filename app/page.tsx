@@ -10,9 +10,9 @@ import { Footer } from '@/components/layout/Footer';
 import { apiClient } from '@/lib/api-client';
 import {
   Laptop, Palette, Camera, FileText, Search,
-  Users, Award, ShieldCheck, TrendingUp, ArrowRight,
+  Users, Award, ShieldCheck, TrendingUp, ArrowLeft, ArrowRight,
   Briefcase, Layers, GraduationCap, Star, Zap,
-  MessageSquare, Clock, Globe2, ChevronRight, ChevronDown,
+  MessageSquare, Clock, Globe2, ChevronLeft, ChevronRight, ChevronDown,
   PenTool, Cpu, BookOpen,
   ClipboardList, Calendar, Truck,
   Video, Edit, Settings, Package, Film,
@@ -210,6 +210,7 @@ const SHOWCASE_UNIVERSITIES = [
     domains: 'du.ac.bd',
     bgLogo: '🎓',
     color: '#06b6d4',
+    logo: '/images/logo_du.png',
     students: '1.2k+',
     gigs: '450+',
   },
@@ -219,6 +220,7 @@ const SHOWCASE_UNIVERSITIES = [
     domains: 'buet.ac.bd',
     bgLogo: '🛠️',
     color: '#3b82f6',
+    logo: '/images/logo_buet.png',
     students: '900+',
     gigs: '380+',
   },
@@ -228,6 +230,7 @@ const SHOWCASE_UNIVERSITIES = [
     domains: 'diu.edu.bd',
     bgLogo: '🏫',
     color: '#10b981',
+    logo: '/images/logo_diu.png',
     students: '2.4k+',
     gigs: '820+',
   },
@@ -237,6 +240,7 @@ const SHOWCASE_UNIVERSITIES = [
     domains: 'northsouth.edu',
     bgLogo: '🌐',
     color: '#f59e0b',
+    logo: '/images/logo_nsu.png',
     students: '1.5k+',
     gigs: '540+',
   },
@@ -246,10 +250,98 @@ const SHOWCASE_UNIVERSITIES = [
     domains: 'g.bracu.ac.bd',
     bgLogo: '📚',
     color: '#ec4899',
+    logo: '/images/logo_bracu.png',
     students: '1.1k+',
     gigs: '390+',
   },
 ];
+
+const AVATAR_IMAGES = [
+  '/images/student_1.jpg',
+  '/images/student_2.jpg',
+  '/images/student_3.jpg',
+  '/images/student_4.jpg',
+];
+
+const getUniversityLogo = (shortName: string, dbLogo?: string): string => {
+  if (dbLogo && dbLogo.startsWith('/') && !dbLogo.startsWith('//')) return dbLogo;
+  const logos: Record<string, string> = {
+    DU: '/images/logo_du.png',
+    BUET: '/images/logo_buet.png',
+    DIU: '/images/logo_diu.png',
+    NSU: '/images/logo_nsu.png',
+    BRACU: '/images/logo_bracu.png',
+    RU: '/images/logo_ru.png',
+    JU: '/images/logo_ju.png',
+    CU: '/images/logo_cu.png',
+    BAU: '/images/logo_bau.png',
+    IUB: '/images/logo_iub.png',
+  };
+  return logos[shortName] || dbLogo || '/images/logo_du.png';
+};
+
+const CAMPUS_DATA: Record<string, { specialties: string[]; freelancers: string; gigs: string; avatars: string[] }> = {
+  DIU: {
+    specialties: ['Web Dev', 'Graphics', 'SEO'],
+    freelancers: '2.4k+',
+    gigs: '820+',
+    avatars: ['AR', 'NH', 'KF']
+  },
+  BUET: {
+    specialties: ['Software', 'CAD', 'Tutoring'],
+    freelancers: '900+',
+    gigs: '380+',
+    avatars: ['MS', 'TA', 'IM']
+  },
+  DU: {
+    specialties: ['Research', 'Writing', 'Business'],
+    freelancers: '1.2k+',
+    gigs: '450+',
+    avatars: ['SK', 'FN', 'ZH']
+  },
+  NSU: {
+    specialties: ['Marketing', 'Design', 'Finance'],
+    freelancers: '1.5k+',
+    gigs: '540+',
+    avatars: ['RA', 'SI', 'MA']
+  },
+  BRACU: {
+    specialties: ['Web Apps', 'Creative', 'Coding'],
+    freelancers: '1.1k+',
+    gigs: '390+',
+    avatars: ['HN', 'KB', 'YT']
+  },
+  IUB: {
+    specialties: ['Business', 'Content', 'Design'],
+    freelancers: '800+',
+    gigs: '180+',
+    avatars: ['FA', 'LM', 'RK']
+  },
+  JU: {
+    specialties: ['Science', 'Writing', 'Data'],
+    freelancers: '750+',
+    gigs: '150+',
+    avatars: ['OP', 'DR', 'AS']
+  },
+  CU: {
+    specialties: ['Arts', 'Translation', 'Design'],
+    freelancers: '700+',
+    gigs: '140+',
+    avatars: ['WM', 'PN', 'GK']
+  },
+  BAU: {
+    specialties: ['Biology', 'Research', 'Tasks'],
+    freelancers: '650+',
+    gigs: '120+',
+    avatars: ['TR', 'ED', 'YF']
+  },
+  RU: {
+    specialties: ['Tutoring', 'Translation', 'SEO'],
+    freelancers: '850+',
+    gigs: '210+',
+    avatars: ['OL', 'KS', 'HD']
+  }
+};
 
 const TESTIMONIALS = [
   {
@@ -359,6 +451,19 @@ const HERO_IMAGES = [
 
 export default function Home() {
   const router = useRouter();
+  const scrollRowRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollRowRef.current) {
+      const { scrollLeft } = scrollRowRef.current;
+      const scrollAmount = direction === 'left' ? -340 : 340; // Card width (320px) + gap (20px)
+      scrollRowRef.current.scrollTo({
+        left: scrollLeft + scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   const { firebaseUser, userProfile, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [heroImageIdx, setHeroImageIdx] = useState(0);
@@ -496,7 +601,10 @@ export default function Home() {
     ? testimonials
     : TESTIMONIALS;
 
-
+  const showcaseList = showcaseUniversities.length > 0 ? showcaseUniversities : SHOWCASE_UNIVERSITIES;
+  const halfUni = Math.ceil(showcaseList.length / 2);
+  const showcaseRow1 = showcaseList.slice(0, halfUni);
+  const showcaseRow2 = showcaseList.slice(halfUni);
 
   return (
     <div className={styles.wrapper}>
@@ -684,88 +792,141 @@ export default function Home() {
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
       >
+        {/* Subtle decorative mesh dot pattern overlay */}
+        <div className={styles.uniShowcaseMesh} />
+
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div className={styles.sectionChip}>
               <GraduationCap size={12} />
-              Connected Campus Network
+              <span>Connected Campus Network</span>
+              <span className={styles.uniLiveBadge}>
+                <span className={styles.uniPulseDot} />
+                LIVE
+              </span>
             </div>
             <h2>Active Student Communities</h2>
             <p>Collaborate with verified students and faculty across leading universities in Bangladesh.</p>
           </div>
 
-          <div className={styles.uniGrid}>
-            {(showcaseUniversities.length > 0 ? showcaseUniversities : SHOWCASE_UNIVERSITIES).map((uni, idx) => {
-              const domainsStr = Array.isArray(uni.domains) ? uni.domains[0] : uni.domains;
-              const colorDisplay = uni.color || ACCENT_COLORS[idx % ACCENT_COLORS.length];
+          <div className={styles.uniHubsScrollWrapper}>
+            {/* Scroll Navigation Arrows */}
+            <button 
+              className={styles.scrollArrowLeft} 
+              onClick={() => handleScroll('left')}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft size={56} />
+            </button>
 
-              // Compute initials from shortName or full name fallback
-              const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3);
-              const initialsFontSize = initials.length > 3 ? '10px' : '12px';
+            <div ref={scrollRowRef} className={styles.uniHubsScrollRow}>
+              {showcaseList.map((uni, idx) => {
+                const domainsStr = Array.isArray(uni.domains) ? uni.domains[0] : uni.domains;
+                const colorDisplay = uni.color || ACCENT_COLORS[idx % ACCENT_COLORS.length];
+                const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3);
+                const initialsFontSize = initials.length > 3 ? '10px' : '11px';
 
-              const logoDisplay = uni.logo ? (
-                <img src={uni.logo} alt={uni.shortName} className={styles.uniLogoImage} />
-              ) : (
-                <div 
-                  className={styles.uniLogoInitials} 
-                  style={{ 
-                    backgroundColor: colorDisplay,
-                    fontSize: initialsFontSize
-                  }}
-                >
-                  {initials}
-                </div>
-              );
-
-              const studentsCount = uni.students || (uni.userCount !== undefined ? `${uni.userCount}` : '0');
-              const gigsCount = uni.gigs || (uni.jobCount !== undefined ? `${uni.jobCount}` : '0');
-
-              return (
-                <motion.div 
-                  key={uni.shortName || uni._id} 
-                  className={styles.uniCard}
-                  style={{ 
-                    '--uni-color': colorDisplay,
-                    '--uni-color-light': `${colorDisplay}0a`,
-                    '--uni-color-border': `${colorDisplay}25`
-                  } as React.CSSProperties}
-                  variants={cardVariants}
-                  whileHover={{ 
-                    y: -6, 
-                    transition: { type: "spring", stiffness: 300, damping: 20 }
-                  }}
-                  whileTap={{ scale: 0.985 }}
-                >
-                  <div className={styles.uniCardHeader}>
-                    <div className={styles.uniLogoBox}>
-                      {logoDisplay}
-                    </div>
-                    <div className={styles.uniVerifiedBadge}>
-                      <ShieldCheck size={13} className={styles.uniVerifiedIcon} />
-                      <span>@{domainsStr}</span>
-                    </div>
+                // Fetch official logo from helper
+                const resolvedLogo = getUniversityLogo(uni.shortName, uni.logo);
+                const logoDisplay = resolvedLogo ? (
+                  <img src={resolvedLogo} alt={uni.shortName} className={styles.uniLogoImage} />
+                ) : (
+                  <div className={styles.uniLogoInitials} style={{ fontSize: initialsFontSize }}>
+                    {initials}
                   </div>
-                  
-                  <div className={styles.uniCardBody}>
-                    <h3 className={styles.uniCardTitle}>{uni.name}</h3>
-                    <span className={styles.uniCardShortName}>{uni.shortName || uni.name}</span>
-                  </div>
+                );
 
-                  <div className={styles.uniCardDivider} />
+                // Lookup campus specific metrics
+                const uniData = CAMPUS_DATA[uni.shortName] || { 
+                  specialties: ['Gigs', 'Tasks', 'Assists'], 
+                  freelancers: '500+', 
+                  gigs: '100+', 
+                  avatars: ['ST', 'MD', 'JS'] 
+                };
 
-                  <div className={styles.uniCardStats}>
-                    <div className={styles.uniStatItem}>
-                      <span className={styles.uniStatLabel}>Active Students</span>
-                      <span className={styles.uniStatValue}>{studentsCount}</span>
+                // Select 3 different Unsplash face images dynamically
+                const cardAvatars = AVATAR_IMAGES.slice((idx * 2) % 4, ((idx * 2) % 4) + 3);
+
+                return (
+                  <motion.div 
+                    key={`${uni.shortName || uni._id}`} 
+                    className={styles.uniPill}
+                    style={{ 
+                      '--uni-color': colorDisplay,
+                      '--uni-color-light': `${colorDisplay}0a`,
+                      '--uni-color-border': `${colorDisplay}20`
+                    } as React.CSSProperties}
+                    whileHover={{ 
+                      y: -4,
+                      transition: { type: "spring", stiffness: 400, damping: 20 }
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {/* Card Header */}
+                    <div className={styles.uniHubHeader}>
+                      <div className={styles.uniLogoBox}>
+                        {logoDisplay}
+                      </div>
+                      <div className={styles.uniIdentity}>
+                        <div className={styles.uniNameRow}>
+                          <span className={styles.uniShortName}>{uni.shortName || uni.name}</span>
+                          <ShieldCheck size={12} className={styles.uniVerifiedIcon} />
+                        </div>
+                        <span className={styles.uniFullName} title={uni.name}>{uni.name}</span>
+                      </div>
+                      <span className={styles.uniHeaderDomain}>@{domainsStr}</span>
                     </div>
-                    <div className={styles.uniStatItem}>
-                      <span className={styles.uniStatLabel}>Gigs Completed</span>
-                      <span className={styles.uniStatValue}>{gigsCount}</span>
+
+                    {/* Card Divider */}
+                    <div className={styles.uniHubDivider} />
+
+                    {/* Card Body Stats */}
+                    <div className={styles.uniHubStatsRow}>
+                      <div className={styles.uniHubStatCol}>
+                        <span className={styles.uniHubStatLabel}>Active Talents</span>
+                        <div className={styles.uniAvatarStack}>
+                          {cardAvatars.map((avUrl, avIdx) => (
+                            <div key={avIdx} className={styles.uniAvatarCircle}>
+                              <img src={avUrl} alt="Freelancer avatar" className={styles.uniAvatarImage} />
+                            </div>
+                          ))}
+                          <span className={styles.uniAvatarCount}>+{uniData.freelancers}</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.uniHubStatCol}>
+                        <span className={styles.uniHubStatLabel}>Completed Gigs</span>
+                        <span className={styles.uniStatValue}>{uniData.gigs}</span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+
+                    {/* Card Footer Specialties */}
+                    <div className={styles.uniHubFooter}>
+                      {uniData.specialties.map((spec, specIdx) => (
+                        <span key={specIdx} className={styles.uniSpecTag}>
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <button 
+              className={styles.scrollArrowRight} 
+              onClick={() => handleScroll('right')}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={56} />
+            </button>
+          </div>
+
+          <div className={styles.uniShowcaseFooter}>
+            <span className={styles.uniLiveIndicator}>
+              <span className={styles.uniPulseDot} />
+              <span>Real-time cross-campus network active</span>
+            </span>
           </div>
         </div>
       </motion.section>
@@ -1015,6 +1176,7 @@ export default function Home() {
                 </div>
                 <h4>{title}</h4>
                 <p>{desc}</p>
+                <span className={styles.howGhostNumber}>{step}</span>
                 {i < 2 && (
                   <ChevronRight size={20} className={styles.howConnector} />
                 )}
@@ -1095,7 +1257,7 @@ export default function Home() {
                   />
                 </div>
                 <div className={styles.differentImgCaption}>
-                  Farzana S., Graphics & UI/UX Designer
+                  Verified Students Collaborating on Campus
                 </div>
               </div>
             </motion.div>
