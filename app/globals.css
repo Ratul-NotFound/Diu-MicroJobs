@@ -235,6 +235,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  overflow-x: hidden; /* Prevent page-wide horizontal scrollbars */
 }
 
 body {
@@ -245,6 +246,7 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   min-height: 100vh;
+  overflow-x: hidden; /* Prevent page-wide horizontal scrollbars */
   transition: background-color var(--transition-base),
               color var(--transition-base);
 }

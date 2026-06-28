@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef, forwardRef } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useSpring, Variants, AnimatePresence, HTMLMotionProps, useMotionTemplate } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -75,21 +75,27 @@ const containerVariants: Variants = {
 const cardVariants: Variants = {
   hidden: { 
     opacity: 0, 
-    y: 30, 
-    scale: 0.96, 
-    filter: "blur(6px)", 
-    willChange: "transform, opacity, filter" 
+    y: 35, 
+    rotateX: 8, 
+    rotateY: -5,
+    scale: 0.97,
+    z: -30,
+    transformPerspective: 1000,
+    willChange: "transform, opacity" 
   },
   visible: { 
     opacity: 1, 
     y: 0, 
+    rotateX: 0,
+    rotateY: 0,
     scale: 1,
-    filter: "blur(0px)",
+    z: 0,
+    transformPerspective: 1000,
     transition: { 
       type: "spring", 
-      stiffness: 90, 
+      stiffness: 85, 
       damping: 18, 
-      mass: 0.8 
+      mass: 0.9
     }
   }
 };
@@ -446,6 +452,68 @@ const HERO_IMAGES = [
   '/images/gig_research.png',
   '/images/gig_assignment.png',
 ];
+interface ProfessionalTiltCardProps extends Omit<HTMLMotionProps<"div">, 'children'> {
+  children?: React.ReactNode;
+  maxTilt?: number;
+  glowColor?: string;
+}
+
+function ProfessionalTiltCard({ 
+  children, 
+  className, 
+  variants, 
+  style, 
+  maxTilt = 3, 
+  glowColor = "rgba(59, 130, 246, 0.15)",
+  ...props
+}: ProfessionalTiltCardProps) {
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+
+  const rotateX = useSpring(useTransform(y, [0, 1], [maxTilt, -maxTilt]), { stiffness: 200, damping: 25 });
+  const rotateY = useSpring(useTransform(x, [0, 1], [-maxTilt, maxTilt]), { stiffness: 200, damping: 25 });
+
+  const mouseXPercent = useTransform(x, [0, 1], ["0%", "100%"]);
+  const mouseYPercent = useTransform(y, [0, 1], ["0%", "100%"]);
+
+  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width);
+    y.set((event.clientY - rect.top) / rect.height);
+  }
+
+  function handleMouseLeave() {
+    x.set(0.5);
+    y.set(0.5);
+  }
+
+  return (
+    <motion.div
+      className={className}
+      variants={variants}
+      style={{
+        ...style,
+        rotateX,
+        rotateY,
+        transformPerspective: 1000,
+        transformStyle: "preserve-3d",
+        position: 'relative'
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      whileTap={{ scale: 0.985 }}
+      {...props}
+    >
+      <motion.div 
+        className={styles.cardGlowOverlay}
+        style={{
+          background: useMotionTemplate`radial-gradient(circle 180px at ${mouseXPercent} ${mouseYPercent}, ${glowColor}, transparent 80%)`
+        } as any}
+      />
+      {children}
+    </motion.div>
+  );
+}
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 
@@ -821,13 +889,14 @@ export default function Home() {
 
             <div ref={scrollRowRef} className={styles.uniHubsScrollRow}>
               {showcaseList.map((uni, idx) => {
+                const colorDisplay = uni.color || '#3b82f6';
+                const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3).toUpperCase();
                 const domainsStr = Array.isArray(uni.domains) ? uni.domains[0] : uni.domains;
-                const colorDisplay = uni.color || ACCENT_COLORS[idx % ACCENT_COLORS.length];
-                const initials = uni.shortName || uni.name.split(' ').map((n: string) => n[0]).join('').slice(0, 3);
-                const initialsFontSize = initials.length > 3 ? '10px' : '11px';
-
-                // Fetch official logo from helper
+                
+                const initialsFontSize = initials.length > 2 ? '12px' : '14px';
+                
                 const resolvedLogo = getUniversityLogo(uni.shortName, uni.logo);
+                
                 const logoDisplay = resolvedLogo ? (
                   <img src={resolvedLogo} alt={uni.shortName} className={styles.uniLogoImage} />
                 ) : (
@@ -848,7 +917,7 @@ export default function Home() {
                 const cardAvatars = AVATAR_IMAGES.slice((idx * 2) % 4, ((idx * 2) % 4) + 3);
 
                 return (
-                  <motion.div 
+                  <ProfessionalTiltCard 
                     key={`${uni.shortName || uni._id}`} 
                     className={styles.uniPill}
                     style={{ 
@@ -856,11 +925,9 @@ export default function Home() {
                       '--uni-color-light': `${colorDisplay}0a`,
                       '--uni-color-border': `${colorDisplay}20`
                     } as React.CSSProperties}
-                    whileHover={{ 
-                      y: -4,
-                      transition: { type: "spring", stiffness: 400, damping: 20 }
-                    }}
-                    whileTap={{ scale: 0.98 }}
+                    variants={cardVariants}
+                    glowColor={`${colorDisplay}22`}
+                    maxTilt={3}
                   >
                     {/* Card Header */}
                     <div className={styles.uniHubHeader}>
@@ -908,7 +975,7 @@ export default function Home() {
                         </span>
                       ))}
                     </div>
-                  </motion.div>
+                  </ProfessionalTiltCard>
                 );
               })}
             </div>
@@ -952,19 +1019,15 @@ export default function Home() {
 
           <div className={styles.categoryGrid}>
             {displayedCategories.map(({ id, name, icon: Icon, color, count, subcategories, bgImage }, idx) => (
-              <motion.div
+              <ProfessionalTiltCard
                 key={id}
                 className={styles.categoryCard}
                 style={{ '--card-color': color } as React.CSSProperties}
                 variants={cardVariants}
                 initial={showAllCategories ? "hidden" : undefined}
                 animate={showAllCategories ? "visible" : undefined}
-                whileHover={{ 
-                  y: -6, 
-                  scale: 1.015,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
-                whileTap={{ scale: 0.985 }}
+                glowColor={`${color}22`}
+                maxTilt={3}
                 onClick={() => router.push(`/jobs?category=${id}`)}
                 role="button"
                 tabIndex={0}
@@ -1008,7 +1071,7 @@ export default function Home() {
                 )}
                 
                 <div className={styles.catCount}>{count} jobs</div>
-              </motion.div>
+              </ProfessionalTiltCard>
             ))}
           </div>
 
@@ -1054,16 +1117,12 @@ export default function Home() {
 
           <div className={styles.gigGrid}>
             {POPULAR_GIGS.map((gig) => (
-              <motion.div
+              <ProfessionalTiltCard
                 key={gig.id}
                 className={styles.gigCard}
                 variants={cardVariants}
-                whileHover={{ 
-                  y: -6, 
-                  scale: 1.015,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
-                whileTap={{ scale: 0.985 }}
+                glowColor="rgba(29, 192, 113, 0.12)"
+                maxTilt={3}
                 onClick={() => router.push(`/jobs?search=${encodeURIComponent(gig.category)}`)}
                 style={{ contentVisibility: 'auto' } as React.CSSProperties}
               >
@@ -1108,7 +1167,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </ProfessionalTiltCard>
             ))}
           </div>
         </div>
@@ -1159,14 +1218,8 @@ export default function Home() {
             {(howToggle === 'client' ? CLIENT_STEPS : FREELANCER_STEPS).map(({ step, title, desc, icon: Icon }, i) => (
               <motion.div 
                 key={step} 
-                className={styles.howCard}
+                className={`${styles.howCard} ${styles['howCard' + (i + 1)]}`}
                 variants={cardVariants}
-                whileHover={{ 
-                  y: -6, 
-                  scale: 1.015,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
-                whileTap={{ scale: 0.985 }}
               >
                 <div className={styles.howCardTop}>
                   <div className={styles.howStepNum}>{step}</div>
@@ -1176,7 +1229,6 @@ export default function Home() {
                 </div>
                 <h4>{title}</h4>
                 <p>{desc}</p>
-                <span className={styles.howGhostNumber}>{step}</span>
                 {i < 2 && (
                   <ChevronRight size={20} className={styles.howConnector} />
                 )}
@@ -1283,16 +1335,12 @@ export default function Home() {
 
           <div className={styles.testimonialGrid}>
             {activeTestimonials.map(({ text, author, role, rating, initials }, idx) => (
-              <motion.div 
+              <ProfessionalTiltCard 
                 key={author} 
                 className={styles.testimonialCard}
                 variants={cardVariants}
-                whileHover={{ 
-                  y: -6, 
-                  scale: 1.015,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
-                whileTap={{ scale: 0.985 }}
+                glowColor="rgba(59, 130, 246, 0.12)"
+                maxTilt={3}
               >
                 <div className={styles.testimonialStars}>
                   {Array.from({ length: rating }).map((_, i) => (
@@ -1307,7 +1355,7 @@ export default function Home() {
                     <div className={styles.testimonialRole}>{role}</div>
                   </div>
                 </div>
-              </motion.div>
+              </ProfessionalTiltCard>
             ))}
           </div>
         </div>

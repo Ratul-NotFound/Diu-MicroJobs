@@ -8,6 +8,7 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-bg);
+  overflow-x: hidden; /* Prevent page-wide horizontal scrollbars */
 }
 
 .container {
@@ -578,16 +579,15 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-8);
-  border: 1px solid var(--color-border-light);
+  border: 1px solid rgba(16, 185, 129, 0.12); /* Glowing border color */
   border-radius: 24px;
-  background: var(--color-card);
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
   overflow: hidden; /* To prevent decorative elements from leaking out */
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
-/* Subtle dot grid overlay inside the cards */
+/* Subtle dot grid overlay inside all cards */
 .howCard::before {
   content: '';
   position: absolute;
@@ -617,8 +617,9 @@
 }
 
 .howCard:hover {
-  border-color: rgba(16, 185, 129, 0.25) !important;
-  box-shadow: 0 16px 36px rgba(16, 185, 129, 0.05) !important;
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
 }
 
 .howCard:hover::before {
@@ -628,6 +629,78 @@
 .howCard:hover::after {
   transform: scale(1.3);
   opacity: 0.9;
+}
+
+/* Step 1 Specific: Clipboard Checklist Watermark */
+.howCard1 {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjAuOCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiPjxwYXRoIGQ9Ik0xNiA0aDJhMiAyIDAgMCAxIDIgMnYxNGEyIDIgMCAwIDEtMiAySDZhMiAyIDAgMCAxLTItMlY2YTIgMiAwIDAgMSAyLTJoMiIvPjxyZWN0IHg9IjgiIHk9IjIiIHdpZHRoPSI4IiBoZWlnaHQ9IjQiIHJ4PSIxIiByeT0iMSIvPjxwYXRoIGQ9Ik05IDE0aDYiLz48cGF0aCBkPSJNOSAxOGg2Ii8+PHBhdGggZD0iTTkgMTBoNiIvPjwvc3ZnPg=="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+  background-size: 130px 130px, 100% 100%;
+  background-position: right -15px bottom -15px, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.howCard1:hover {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjEuMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMTgiPjxwYXRoIGQ9Ik0xNiA0aDJhMiAyIDAgMCAxIDIgMnYxNGEyIDIgMCAwIDEtMiAySDZhMiAyIDAgMCAxLTItMlY2YTIgMiAwIDAgMSAyLTJoMiIvPjxyZWN0IHg9IjgiIHk9IjIiIHdpZHRoPSI4IiBoZWlnaHQ9IjQiIHJ4PSIxIiByeT0iMSIvPjxwYXRoIGQ9Ik05IDE0aDYiLz48cGF0aCBkPSJNOSAxOGg2Ii8+PHBhdGggZD0iTTkgMTBoNiIvPjwvc3ZnPg=="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), 
+    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+  background-size: 135px 135px, 100% 100%, 100% 100%;
+  background-position: right -10px bottom -10px, center, center;
+}
+
+/* Step 2 Specific: Chat/Proposals Watermark */
+.howCard2 {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjAuOCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiPjxwYXRoIGQ9Ik0yMSAxNWEyIDIgMCAwIDEtMiAySDdsLTQgNFY1YTIgMiAwIDAgMSAyLTJoMTRhMiAyIDAgMCAxIDIgMnoiLz48L3N2Zz4="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+  background-size: 130px 130px, 100% 100%;
+  background-position: right -15px bottom -15px, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.howCard2:hover {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjEuMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMTgiPjxwYXRoIGQ9Ik0yMSAxNWEyIDIgMCAwIDEtMiAySDdsLTQgNFY1YTIgMiAwIDAgMSAyLTJoMTRhMiAyIDAgMCAxIDIgMnoiLz48L3N2Zz4="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), 
+    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+  background-size: 135px 135px, 100% 100%, 100% 100%;
+  background-position: right -10px bottom -10px, center, center;
+}
+
+/* Step 3 Specific: Shield Escrow/Trust Vault Watermark */
+.howCard3 {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjAuOCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiPjxyZWN0IHg9IjMiIHk9IjExIiB3aWR0aD0iMTgiIGhlaWdodD0iMTEiIHJ4PSIyIiByeT0iMiIvPjxwYXRoIGQ9Ik03IDExVjdhNSA1IDAgMCAxIDEwIDB2NCIvPjwvc3ZnPg=="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+  background-size: 130px 130px, 100% 100%;
+  background-position: right -15px bottom -15px, center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+.howCard3:hover {
+  background-color: var(--color-card);
+  background-image: 
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjEuMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMTgiPjxyZWN0IHg9IjMiIHk9IjExIiB3aWR0aD0iMTgiIGhlaWdodD0iMTEiIHJ4PSIyIiByeT0iMiIvPjxwYXRoIGQ9Ik03IDExVjdhNSA1IDAgMCAxIDEwIDB2NCIvPjwvc3ZnPg=="),
+    radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%), 
+    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+  background-size: 135px 135px, 100% 100%, 100% 100%;
+  background-position: right -10px bottom -10px, center, center;
+}
+
+/* Spin and glow on parent hover */
+.howCard:hover :global(.lucide),
+.howCard:hover .howIconBox {
+  transform: scale(1.1) rotate(6deg);
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-green);
 }
 
 .howStepNum {
@@ -664,25 +737,7 @@
   z-index: 2;
 }
 
-.howGhostNumber {
-  position: absolute;
-  bottom: -35px;
-  right: 5px;
-  font-size: 150px;
-  font-weight: 900;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(16, 185, 129, 0.06);
-  pointer-events: none;
-  line-height: 1;
-  font-family: var(--font-heading);
-  z-index: 0;
-  transition: all 0.3s ease;
-}
 
-.howCard:hover .howGhostNumber {
-  -webkit-text-stroke-color: rgba(16, 185, 129, 0.15);
-  transform: translateY(-8px) scale(1.05);
-}
 
 .howConnector {
   position: absolute;
@@ -1480,8 +1535,8 @@
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding: var(--space-6) 6px var(--space-8) 6px;
-  margin-top: var(--space-4);
+  padding: 36px 20px 28px 20px; /* Increased top/bottom padding to prevent logo/hover clipping */
+  margin-top: var(--space-2);
   scrollbar-width: none; /* Hide default scrollbar on Firefox */
   scroll-snap-type: x mandatory;
   width: 100%;
@@ -2067,7 +2122,7 @@
   /* Campus Talent Hub Catalog for Mobile */
   .uniHubsScrollRow {
     gap: 12px;
-    padding: var(--space-4) 4px var(--space-6) 4px;
+    padding: 32px 10px 24px 10px !important;
     margin-top: var(--space-2);
   }
   .uniPill {
@@ -2112,7 +2167,7 @@
     display: flex !important;
     overflow-x: auto !important;
     gap: 12px !important;
-    padding: 4px 4px 16px 4px !important;
+    padding: 12px 6px 16px 6px !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
@@ -2152,7 +2207,7 @@
     display: flex !important;
     overflow-x: auto !important;
     gap: 12px !important;
-    padding: 4px 4px 16px 4px !important;
+    padding: 12px 6px 16px 6px !important;
     margin-top: var(--space-6) !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
@@ -2181,7 +2236,7 @@
     display: flex !important;
     overflow-x: auto !important;
     gap: 12px !important;
-    padding: 4px 4px 16px 4px !important;
+    padding: 12px 6px 16px 6px !important;
     margin-top: var(--space-6) !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
@@ -2201,7 +2256,7 @@
     display: flex !important;
     overflow-x: auto !important;
     gap: 12px !important;
-    padding: 4px 4px 16px 4px !important;
+    padding: 12px 6px 16px 6px !important;
     margin-top: var(--space-6) !important;
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
@@ -2266,6 +2321,16 @@
   .trustStat span {
     font-size: 9px !important;
     letter-spacing: 0.02em !important;
+  }
+
+  /* Mobile sizing for howCard watermarks to prevent layout crowding */
+  .howCard1, .howCard2, .howCard3 {
+    background-size: 85px 85px, 100% 100% !important;
+    background-position: right -10px bottom -10px, center !important;
+  }
+  .howCard1:hover, .howCard2:hover, .howCard3:hover {
+    background-size: 90px 90px, 100% 100%, 100% 100% !important;
+    background-position: right -5px bottom -5px, center, center !important;
   }
 }
 
@@ -2975,4 +3040,19 @@
   }
 }
 
+.cardGlowOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
 
+.categoryCard:hover .cardGlowOverlay,
+.uniPill:hover .cardGlowOverlay,
+.gigCard:hover .cardGlowOverlay,
+.testimonialCard:hover .cardGlowOverlay {
+  opacity: 1;
+}
